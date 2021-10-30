@@ -24,8 +24,8 @@ class AccountController extends Controller
     }
 
     public function accounts(){
-        $unitaccount = DepartmentUser::with(['user', 'user.userinfo'])->paginate(8);
-        $orgaccount = OrganizationUser::with(['user', 'user.userinfo'])->paginate(8);
+        $unitaccount = DepartmentUser::with(['user', 'user.userinfo', 'department', 'user.userinfo.role'])->paginate(8);
+        $orgaccount = OrganizationUser::with(['user', 'user.userinfo', 'organization', 'user.userinfo.role'])->paginate(8);
         return response()->json(['unit' => $unitaccount, 'org' => $orgaccount]);
     }
 
@@ -35,12 +35,16 @@ class AccountController extends Controller
     }
 
     public function approvedOrgAccounts(){
-        $orgaccount = UserAccount::whereHas()->where('status', 'Approved')->with(['userinfo', 'userinfo.orgunit', 'userinfo.role'])->paginate(8);
+        $orgaccount = OrganizationUser::whereHas('user', function ($query){
+            $query->where('status', 'Approved');
+        })->with(['user', 'user.userinfo', 'organization', 'user.userinfo.role'])->paginate(8);
         return response()->json($orgaccount);
     }
 
     public function pendingOrgAccounts(){
-        $orgaccount = UserAccount::where('type', 'Organization')->where('status', 'Pending')->with(['userinfo', 'userinfo.orgunit', 'userinfo.role'])->paginate(8);
+        $orgaccount = OrganizationUser::whereHas('user', function ($query){
+            $query->where('status', 'Pending');
+        })->with(['user', 'user.userinfo', 'organization', 'user.userinfo.role'])->paginate(8);
         return response()->json($orgaccount);
     }
 
@@ -51,12 +55,16 @@ class AccountController extends Controller
     }
 
     public function approvedUnitAccounts(){
-        $unitaccount = UserAccount::where('type', 'Department')->where('status', 'Approved')->with(['userinfo', 'userinfo.orgunit', 'userinfo.role'])->paginate(8);
+        $unitaccount = DepartmentUser::whereHas('user', function ($query){
+            $query->where('status', 'Approved');
+        })->with(['user', 'user.userinfo', 'department', 'user.userinfo.role'])->paginate(8);
         return response()->json($unitaccount);
     }
 
     public function pendingUnitAccounts(){
-        $unitaccount = UserAccount::where('type', 'Department')->where('status', 'Pending')->with(['userinfo', 'userinfo.orgunit', 'userinfo.role'])->paginate(8);
+        $unitaccount = DepartmentUser::whereHas('user', function ($query){
+            $query->where('status', 'Pending');
+        })->with(['user', 'user.userinfo', 'department', 'user.userinfo.role'])->paginate(8);
         return response()->json($unitaccount);
     }
 
