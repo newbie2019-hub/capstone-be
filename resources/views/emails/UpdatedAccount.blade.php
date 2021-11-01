@@ -9,7 +9,7 @@ Last Name: {{$last_name}} <br/>
 Gender: {{$gender}} <br/>
 Email: {{$email}}
 
-@component('mail::button', ['url' => 'https://touchless-management.herokuapp.com'])
+@component('mail::button', ['url' => 'https://www.lnukiosk.live'])
 Visit Site
 @endcomponent
 

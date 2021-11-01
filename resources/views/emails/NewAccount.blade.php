@@ -11,7 +11,7 @@ Gender: {{$details['gender']}} <br/>
 Email: {{$details['email']}} <br/>
 Password: {{$details['password']}} <br/>
 Account Type: {{$details['account_type']}}
-@component('mail::button', ['url'=> 'https://touchless-management.herokuapp.com'])
+@component('mail::button', ['url'=> 'https://www.lnukiosk.live'])
 Visit Site
 @endcomponent
 

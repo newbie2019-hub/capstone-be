@@ -157,7 +157,7 @@ class UniversityInfoController extends Controller
     }
 
     public function courses(){
-        $course = Course::with('college')->paginate(8);
+        $course = Course::with(['college', 'objectives'])->paginate(8);
         return response()->json($course);
     }
 
@@ -167,20 +167,45 @@ class UniversityInfoController extends Controller
     }
 
     public function storeCourse(Request $request){
-        Course::create([
+        $course = Course::create([
             'course_name' => $request->name, 
             'course_abbreviation' => $request->abbreviation,
             'college_id' => $request->college
         ]);
 
+        if($request->objectives){
+            foreach($request->objectives as $objective){
+                CourseObjective::create([
+                    'course_objective' => $objective['objective'], 
+                    'course_id' => $course->id
+                ]);
+            }
+        }
+
         return response()->json(['success' => 'Course added successfully']);
     }
 
     public function updateCourse(Request $request, $id){
+        CourseObjective::where('course_id', $id)->delete();
+
         $course = Course::where('id', $id)->first();
+        
+        if($request->objectives){
+            foreach($request->objectives as $objective){
+                //CHECK IF COURSE OBJECTIVE SENT IS NOT EMPTY
+                if($objective['course_objective']){
+                    CourseObjective::create([
+                        'course_objective' => $objective['course_objective'], 
+                        'course_id' => $id
+                    ]);
+                }
+            }
+        }
+
         $course->update([
-            'course_name' => $request->name, 
-            'course_abbreviation' => $request->abbreviation
+            'course_name' => $request->course_name, 
+            'course_abbreviation' => $request->course_abbreviation,
+            'college_id' => $request->college_id
         ]);
         
         return response()->json(['success' => 'Course updated successfully']);
@@ -196,20 +221,20 @@ class UniversityInfoController extends Controller
         return response()->json($courseobjective);
     }
 
-    public function searchCourseObjective(Request $request){
-        $courseobjective = CourseObjective::with('course')
-        ->where('course_objective', 'like', '%'.$request->search.'%')->paginate(8);
-        return response()->json($courseobjective);
-    }
+    // public function searchCourseObjective(Request $request){
+    //     $courseobjective = CourseObjective::with('course')
+    //     ->where('course_objective', 'like', '%'.$request->search.'%')->paginate(8);
+    //     return response()->json($courseobjective);
+    // }
 
-    public function storeCourseObjective(Request $request){
-        CourseObjective::create([
-            'course_objective' => $request->objective, 
-            'course_id' => $request->college
-        ]);
+    // public function storeCourseObjective(Request $request){
+    //     CourseObjective::create([
+    //         'course_objective' => $request->objective, 
+    //         'course_id' => $request->college
+    //     ]);
 
-        return response()->json(['success' => 'Course Objective added successfully']);
-    }
+    //     return response()->json(['success' => 'Course Objective added successfully']);
+    // }
 
     public function updateCourseObjective(Request $request, $id){
         $courseobjective = CourseObjective::where('id', $id)->first();

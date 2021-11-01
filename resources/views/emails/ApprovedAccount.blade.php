@@ -8,7 +8,7 @@ Middle Name: {{$middle_name}} <br/>
 Last Name: {{$last_name}} <br/>
 Email: {{$email}}
 
-@component('mail::button', ['url' => 'https://touchless-management.herokuapp.com'])
+@component('mail::button', ['url' => 'https://www.lnukiosk.live'])
 Visit Site
 @endcomponent
 

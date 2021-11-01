@@ -13,4 +13,8 @@ class Course extends Model
     public function college(){
         return $this->belongsTo(College::class,'college_id', 'id');
     }
+
+    public function objectives(){
+        return $this->hasMany(CourseObjective::class, 'course_id', 'id');
+    }
 }

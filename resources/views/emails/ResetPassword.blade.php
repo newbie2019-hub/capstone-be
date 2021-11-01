@@ -4,7 +4,7 @@ Please ignore this message if you didn't make this request.
 
 Please click the link to reset your password.<br/>
 
-@component('mail::button', ['url' => 'https://touchless-management.herokuapp.com/account/reset?email='.$details['email'].'&token='.$details['token'].''])
+@component('mail::button', ['url' => 'https://www.lnukiosk.live/account/reset?email='.$details['email'].'&token='.$details['token'].''])
 Visit Site
 @endcomponent
 
