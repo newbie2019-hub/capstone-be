@@ -25,13 +25,13 @@ class UserMemberController extends Controller
 
         if(auth()->user()->type == 'Organization'){
             $account = OrganizationUser::where('organization_id', auth()->user()->userinfo->organization->id)
-            ->with(['user.userinfo', 'organization', 'user.userinfo.role'])
+            ->with(['user.userinfo', 'organization', 'user.userinfo.role', 'user.posts', 'user.posts.postcontent'])
             ->where('user_account_id', '<>', auth()->user()->id)
             ->paginate(8);
         }
         if(auth()->user()->type == 'Department'){
             $account = DepartmentUser::where('department_id', auth()->user()->userinfo->department->id)
-            ->with(['user.userinfo', 'department', 'user.userinfo.role'])
+            ->with(['user.userinfo', 'department', 'user.userinfo.role', 'user.posts', 'user.posts.postcontent'])
             ->where('user_account_id', '<>', auth()->user()->id)
             ->paginate(8);
         }
@@ -48,7 +48,7 @@ class UserMemberController extends Controller
                 $query->where('first_name', 'like', '%'.request()->get('search').'%');
                 $query->orWhere('last_name', 'like', '%'.request()->get('search').'%');
             })->where('organization_id', auth()->user()->userinfo->organization->id)
-            ->with(['user.userinfo', 'organization', 'user.userinfo.role'])
+            ->with(['user.userinfo', 'organization', 'user.userinfo.role', 'user.posts', 'user.posts.postcontent'])
             ->where('user_account_id', '<>', auth()->user()->id)
             ->paginate(8);
         }
@@ -57,7 +57,7 @@ class UserMemberController extends Controller
                 $query->where('first_name', 'like', '%'.request()->get('search').'%');
                 $query->orWhere('last_name', 'like', '%'.request()->get('search').'%');
             })->where('department_id', auth()->user()->userinfo->department->id)
-            ->with(['user.userinfo', 'department', 'user.userinfo.role'])
+            ->with(['user.userinfo', 'department', 'user.userinfo.role', 'user.posts', 'user.posts.postcontent'])
             ->where('user_account_id', '<>', auth()->user()->id)
             ->paginate(8);
         }
