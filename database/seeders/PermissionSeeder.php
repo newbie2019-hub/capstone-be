@@ -33,6 +33,15 @@ class PermissionSeeder extends Seeder
             ['permission' => 'org_view_post'], //15
             ['permission' => 'org_approve_member'], //16
             ['permission' => 'view_org_member_post'], //17
+            ['permission' => 'orgunit_dashboard'], //18
+            ['permission' => 'orgunit_posts'], //19
+            ['permission' => 'orgunit_members'], //20
+            ['permission' => 'osa_post_management'], //21
+            ['permission' => 'osa_tel_directory'], //22
+            ['permission' => 'osa_faqs_management'], //23
+            ['permission' => 'osa_scholarship'], //24
+            ['permission' => 'osa_announcements'], //25
+            ['permission' => 'osa_permissions'], //26
         ];
 
         foreach($data as $permission){

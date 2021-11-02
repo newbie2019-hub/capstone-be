@@ -34,7 +34,7 @@ class PostController extends Controller
             }
         }
         else {
-            $post = Post::with('postcontent')->where('user_account_id', auth()->user()->id)->paginate(8);
+            $post = Post::with(['postcontent', 'useraccount.userinfo'])->where('user_account_id', auth()->user()->id)->paginate(8);
             return response()->json($post);
         }
 

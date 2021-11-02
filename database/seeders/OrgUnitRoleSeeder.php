@@ -42,5 +42,10 @@ class OrgUnitRoleSeeder extends Seeder
                'type' => 'Department'
             ]);
         }
+
+        OrgUnitRole::create([
+            'role' => 'OSA',
+            'type' => 'Organization'
+        ]);
     }
 }

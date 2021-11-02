@@ -9,6 +9,8 @@ use App\Http\Controllers\FaqController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\InformationKioskController;
 use App\Http\Controllers\OrganizationController;
+use App\Http\Controllers\OSAFAQsController;
+use App\Http\Controllers\OSATelDirectoryController;
 use App\Http\Controllers\RateController;
 use App\Http\Controllers\RolePermissionController;
 use App\Http\Controllers\SchoolOfficialsController;
@@ -200,6 +202,21 @@ Route::group(['middleware' => 'api'], function (){
         // Route::get('posts', [UserMemberController::class, 'accPosts']);
         Route::put('approveMember/{id}', [UserMemberController::class, 'approveMember']);
         Route::put('approveOrgMember/{id}', [UserMemberController::class, 'approveOrgMember']);
+
+        //FAQS - OSA
+        Route::get('faqs', [OSAFAQsController::class, 'faqs']);
+        Route::post('faqs', [OSAFAQsController::class, 'storeFaqs']);
+        Route::post('search/faqs', [OSAFAQsController::class, 'searchFaqs']);
+        Route::put('faqs/{id}', [OSAFAQsController::class, 'updateFaqs']);
+        Route::delete('faqs/destroy/{id}', [OSAFAQsController::class, 'deleteFaqs']);
+
+
+        //TEL DIRECTORY - OSA
+        Route::get('tel_directory', [OSATelDirectoryController::class, 'telephoneDirectories']);
+        Route::post('search/telephone', [OSATelDirectoryController::class, 'searchTelephoneDirectory']);
+        Route::post('new_telephone', [OSATelDirectoryController::class, 'storeTelephone']);
+        Route::put('telephone/{id}', [OSATelDirectoryController::class, 'updateTelephone']);
+        Route::delete('telephone/destroy/{id}', [OSATelDirectoryController::class, 'deleteTelephone']);
     });
 
 });

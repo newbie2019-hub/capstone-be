@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Department;
+use App\Models\Faqs;
 use App\Models\Organization;
 use App\Models\OrgUnit;
 use App\Models\Post;

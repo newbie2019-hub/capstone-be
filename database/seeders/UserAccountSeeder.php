@@ -19,29 +19,6 @@ class UserAccountSeeder extends Seeder
      */
     public function run()
     {
-        /** USER 1 */
-        $userinfo1 = UserInfo::create([
-            'first_name' => 'Ezikiel',
-            'middle_name' => 'Pura',
-            'last_name' => 'Tulawan',
-            'gender' => 'Male',
-            'contact_number' => '09123456790',
-            'org_unit_role_id' => 6,
-        ]);
-
-        $user1 = UserAccount::create([
-            'user_info_id' => $userinfo1->id,
-            'email' => 'ezikielpuratulawan@gmail.com',
-            'password' => Hash::make('123123'),
-            'status' => 'Approved',
-            'type' => 'Organization'
-        ]);
-
-        OrganizationUser::create([
-            'user_account_id' => $user1->id,
-            'organization_id' => 1
-        ]);
-
         /** USER 2 */
         $userinfo2 = UserInfo::create([
             'first_name' => 'Danica',
@@ -247,6 +224,24 @@ class UserAccountSeeder extends Seeder
         DepartmentUser::create([
             'user_account_id' => $userinfo10->id,
             'department_id' => 1
+        ]);
+
+        /** USER 11 - OSA */
+        $osaccount = UserInfo::create([
+            'first_name' => 'Ezikiel',
+            'middle_name' => 'Pura',
+            'last_name' => 'Tulawan',
+            'gender' => 'Male',
+            'contact_number' => '09123456790',
+            'org_unit_role_id' => 12,
+        ]);
+
+        $osaccount = UserAccount::create([
+            'user_info_id' => $osaccount->id,
+            'email' => 'ezikieltulawan@gmail.com',
+            'password' => Hash::make('123123'),
+            'status' => 'Approved',
+            'type' => 'Organization'
         ]);
 
      

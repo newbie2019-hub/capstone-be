@@ -3,9 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\DepartmentUser;
+use App\Models\Faqs;
+use App\Models\Organization;
 use App\Models\OrganizationUser;
 use App\Models\OrgUnitRole;
 use App\Models\Post;
+use App\Models\TelephoneDirectory;
 use App\Models\UserAccount;
 
 class UserDashboardController extends Controller
@@ -34,11 +37,23 @@ class UserDashboardController extends Controller
 
     public function summary(){
         if(auth()->user()->type == 'Organization'){
-            $post = Post::whereHas('useraccount.userinfo.organization', function($query){
-                $query->where('id', auth()->user()->userinfo->organization->id);
-            })->with(['userinfo', 'userinfo.organization', 'userinfo.role'])->count();
+            if(auth()->user()->userinfo->role['role'] == 'OSA'){
+                $org = Organization::count();
+                $faqs = Faqs::count();
+                $tel = TelephoneDirectory::count();
+                $post = Post::whereHas('useraccount', function($query){
+                    $query->where('type', 'Organization');
+                })->count();
 
-            $members = OrganizationUser::where('organization_id', auth()->user()->userinfo->organization->id)->count();
+                return response()->json(['post' => $post,'faqs' => $faqs, 'org' => $org, 'tel' => $tel]);
+            }
+            else {
+                $post = Post::whereHas('useraccount.userinfo.organization', function($query){
+                    $query->where('id', auth()->user()->userinfo->organization->id);
+                })->with(['userinfo', 'userinfo.organization', 'userinfo.role'])->count();
+    
+                $members = OrganizationUser::where('organization_id', auth()->user()->userinfo->organization->id)->count();
+            }
         }
         
         if(auth()->user()->type == 'Department'){
@@ -49,6 +64,9 @@ class UserDashboardController extends Controller
             $members = DepartmentUser::where('department_id', auth()->user()->userinfo->department->id)->count();
         }
 
+        $faqs = Faqs::count();
+
         return response()->json(['post' => $post, 'members' => $members]);
     }
+
 }

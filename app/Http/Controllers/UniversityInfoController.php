@@ -221,21 +221,6 @@ class UniversityInfoController extends Controller
         return response()->json($courseobjective);
     }
 
-    // public function searchCourseObjective(Request $request){
-    //     $courseobjective = CourseObjective::with('course')
-    //     ->where('course_objective', 'like', '%'.$request->search.'%')->paginate(8);
-    //     return response()->json($courseobjective);
-    // }
-
-    // public function storeCourseObjective(Request $request){
-    //     CourseObjective::create([
-    //         'course_objective' => $request->objective, 
-    //         'course_id' => $request->college
-    //     ]);
-
-    //     return response()->json(['success' => 'Course Objective added successfully']);
-    // }
-
     public function updateCourseObjective(Request $request, $id){
         $courseobjective = CourseObjective::where('id', $id)->first();
         $courseobjective->update([
@@ -281,38 +266,38 @@ class UniversityInfoController extends Controller
         return response()->json(['success' => 'Goal deleted successfully']);
     }
 
-    public function objectives(){
-        $objectives = Objective::with('college:id,name,abbreviation')->paginate(8);
-        return response()->json($objectives);
-    }
+    // public function objectives(){
+    //     $objectives = Objective::with('college:id,name,abbreviation')->paginate(8);
+    //     return response()->json($objectives);
+    // }
 
-    public function searchObjective(Request $request){
-        $objectives = Objective::with('college:id,name,abbreviation')->where('objective', 'like', '%'.$request->searchobjective.'%')->paginate(8);
-        return response()->json($objectives);
-    }
+    // public function searchObjective(Request $request){
+    //     $objectives = Objective::with('college:id,name,abbreviation')->where('objective', 'like', '%'.$request->searchobjective.'%')->paginate(8);
+    //     return response()->json($objectives);
+    // }
 
-    public function storeObjective(Request $request){
-        Objective::create([
-            'objective' => $request->objective_content, 
-            'college_id' => $request->academic
-        ]);
+    // public function storeObjective(Request $request){
+    //     Objective::create([
+    //         'objective' => $request->objective_content, 
+    //         'college_id' => $request->academic
+    //     ]);
 
-        return response()->json(['success' => 'Objective added successfully']);
-    }
+    //     return response()->json(['success' => 'Objective added successfully']);
+    // }
 
-    public function updateObjective(Request $request, $id){
-        $objectives = Objective::where('id', $id)->first();
-        $objectives->update([
-            'objective' => $request->objective, 
-        ]);
+    // public function updateObjective(Request $request, $id){
+    //     $objectives = Objective::where('id', $id)->first();
+    //     $objectives->update([
+    //         'objective' => $request->objective, 
+    //     ]);
         
-        return response()->json(['success' => 'Objective updated successfully']);
-    }
+    //     return response()->json(['success' => 'Objective updated successfully']);
+    // }
 
-    public function deleteObjective($id){
-        Objective::destroy($id);
-        return response()->json(['success' => 'Objective deleted successfully']);
-    }
+    // public function deleteObjective($id){
+    //     Objective::destroy($id);
+    //     return response()->json(['success' => 'Objective deleted successfully']);
+    // }
     
     public function destroy($id){
         SchoolOfficials::destroy($id);
