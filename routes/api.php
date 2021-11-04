@@ -10,6 +10,7 @@ use App\Http\Controllers\PostController;
 use App\Http\Controllers\InformationKioskController;
 use App\Http\Controllers\OrganizationController;
 use App\Http\Controllers\OSAFAQsController;
+use App\Http\Controllers\OSAOrganizationController;
 use App\Http\Controllers\OSATelDirectoryController;
 use App\Http\Controllers\RateController;
 use App\Http\Controllers\RolePermissionController;
@@ -217,6 +218,9 @@ Route::group(['middleware' => 'api'], function (){
         Route::post('new_telephone', [OSATelDirectoryController::class, 'storeTelephone']);
         Route::put('telephone/{id}', [OSATelDirectoryController::class, 'updateTelephone']);
         Route::delete('telephone/destroy/{id}', [OSATelDirectoryController::class, 'deleteTelephone']);
+
+        //ORGANIZATIONS - OSA
+        Route::apiResource('osa/organizations', OSAOrganizationController::class);
     });
 
 });

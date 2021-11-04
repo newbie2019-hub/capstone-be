@@ -15,6 +15,10 @@ class Organization extends Model
         return $this->belongsTo(Department::class, 'department_id', 'id');
     }
 
+    public function members(){
+        return $this->hasManyThrough(UserAccount::class, OrganizationUser::class, 'organization_id', 'id', 'id', 'user_account_id');
+    }
+
     public function adviser(){
         return $this->hasOneThrough(UserAccount::class, OrganizationAdmin::class, 'organization_id', 'id', 'id', 'user_account_id');
     }

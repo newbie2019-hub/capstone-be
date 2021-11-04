@@ -111,5 +111,25 @@ class AuthServiceProvider extends ServiceProvider
             $user = $user->userinfo->role->permission->pluck('permission')->toArray();
             return in_array('view_org_member_post', $user) ? true : false;
         });
+
+        Gate::define('osa_permissions', function (UserAccount $user, $id) {
+            $user = $user->userinfo->role->permission->pluck('permission')->toArray();
+            return in_array('osa_permissions', $user) ? true : false;
+        });
+
+        Gate::define('osa_announcements', function (UserAccount $user) {
+            $user = $user->userinfo->role->permission->pluck('permission')->toArray();
+            return in_array('osa_announcements', $user) ? true : false;
+        });
+
+        Gate::define('osa_faqs_management', function (UserAccount $user) {
+            $user = $user->userinfo->role->permission->pluck('permission')->toArray();
+            return in_array('osa_faqs_management', $user) ? true : false;
+        });
+
+        Gate::define('osa_tel_directory', function (UserAccount $user) {
+            $user = $user->userinfo->role->permission->pluck('permission')->toArray();
+            return in_array('osa_tel_directory', $user) ? true : false;
+        });
     }
 }
