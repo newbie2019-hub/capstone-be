@@ -49,11 +49,15 @@ class AdminAuthController extends Controller
                 'contact_number' => $request->contact_number,
             ];
 
+            $account_info = AdminAccountInfo::where('id', auth('admin')->user()->id)->first();
+            
             if($request->image){
                 $data['image'] = $request->image;
+                if($account_info->image){
+                    $this->deleteFileFromServer($account_info->image);
+                }
             }
 
-            $account_info = AdminAccountInfo::where('id', auth('admin')->user()->id)->first();
             $account_info->update($data);
 
             $account = AdminAccount::where('id', auth('admin')->user()->id)->first();

@@ -69,7 +69,7 @@ class UserAuthController extends Controller
            ->with(['user.userinfo'])->first();
 
            if($depUserExist){
-             if($orgUserExist->user->userinfo->org_unit_role_id != 12){
+             if($depUserExist->user->userinfo->org_unit_role_id != 12){
                 return response()->json(['msg' => 'Error! User with the selected position on the department already exist'], 422);
              }    
            }
@@ -268,12 +268,5 @@ class UserAuthController extends Controller
         return $picName;
     }
 
-    //USED WITH DELETING POST
-    public function deleteFileFromServer($filename){
-        $filePath = public_path().'/uploads/'.$filename;
-        if(file_exists($filePath)){
-            @unlink($filePath);
-        }
-        return;
-    }
+   
 }

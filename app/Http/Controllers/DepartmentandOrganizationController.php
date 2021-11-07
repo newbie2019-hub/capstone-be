@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Department;
+use App\Models\DepartmentUser;
 use App\Models\Organization;
+use App\Models\OrganizationUser;
 use App\Models\OrgUnit;
 use App\Models\OrgUnitRole;
 use Illuminate\Http\Request;
@@ -24,11 +26,20 @@ class DepartmentandOrganizationController extends Controller
         return response()->json(['organization' => $organization, 'organization_roles' => $organization_roles, 'unit' => $unit, 'unit_roles' => $unit_roles ]);
     }
 
+    public function allOrganizations(){
+        $org = Organization::get();
+        return response()->json($org);
+    }
+
+    public function allDepartments(){
+        $dep = Department::get();
+        return response()->json($dep);
+    }
+
     public function organization(){
         $org = Organization::with(['department'])->paginate(8);
         return response()->json($org);
     }
-
 
     public function orgRoles(){
         $orgroles = OrgUnitRole::where('type', 'Organization')->paginate(8);
@@ -77,7 +88,7 @@ class DepartmentandOrganizationController extends Controller
     }
 
     public function updateOrganization(Request $request, $id){
-        $organization = Organization::findOrFail($id);
+        $organization = Organization::where('id', $id)->first();
 
         $org = [
             'name' => $request->name,
@@ -87,20 +98,24 @@ class DepartmentandOrganizationController extends Controller
 
         if($request->image){
             $org['image'] = $request->image;
+            if($organization->image){
+                $this->deleteFileFromServer($organization->image);
+            }
         } 
 
         $organization->update($org);
         return response()->json(['msg' => 'Organization updated successfully']);
     }
-    /// NEED TO BE FIX
+
+    // NEEDS TO BE FIX
+    //FIXED - 11:31PM - November 7, 2021
     public function deleteOrganization(Request $request, $id){
-        $organization = OrgUnit::with(['accounts'])->where('id', $id)->first();
+        $organization = OrganizationUser::where('organization_id', $id)->get();
+        OrganizationUser::where('organization_id', $id)->delete();
 
         if($request->organization_id){
-            if($organization->accounts){
-                foreach($organization->accounts as $acc){
-                    $acc->update(['org_unit_id' => $request->organization_id]);
-                }
+            foreach($organization as $org){
+                OrganizationUser::create(['user_account_id' => $org->user_account_id, 'organization_id' => $request->organization_id]);
             }
         }
 
@@ -110,10 +125,16 @@ class DepartmentandOrganizationController extends Controller
 
 
     public function storeDepartment(Request $request){
-        $department = Department::create([
+        $data = [
             'name' => $request->department,
             'abbreviation' => $request->abbreviation
-        ]);
+        ];
+
+        if($request->image){
+            $data['image'] = $request->image;
+        } 
+
+        $department = Department::create($data);
 
         return response()->json($department);
     }
@@ -127,6 +148,10 @@ class DepartmentandOrganizationController extends Controller
         if(!empty($request->department_id)){
             $data['department_id'] = $request->department_id;
         }
+
+        if($request->image){
+            $data['image'] = $request->image;
+        } 
 
         $department = Organization::create($data);
 
@@ -186,14 +211,18 @@ class DepartmentandOrganizationController extends Controller
     }
 
     public function updateDepartment(Request $request, $id){
-        $unit = Department::findOrFail($id);
+        $unit = Department::where('id', $id)->first();
 
         $department = [
-            'name' => $request->name
+            'name' => $request->name,
+            'abbreviation' => $request->abbreviation
         ];
 
         if($request->image){
             $department['image'] = $request->image;
+            if($unit->image){
+                $this->deleteFileFromServer($unit->image);
+            }
         } 
 
         $unit->update($department);
@@ -201,16 +230,15 @@ class DepartmentandOrganizationController extends Controller
     }
 
     public function deleteDepartment(Request $request, $id){
-        $unit = OrgUnit::with(['accounts'])->where('id', $id)->first();
+        $department = DepartmentUser::where('department_id', $id)->get();
+        DepartmentUser::where('department_id', $id)->delete();
 
         if($request->department_id){
-            if($unit->accounts){
-                foreach($unit->accounts as $acc){
-                    $acc->update(['org_unit_id' => $request->department_id]);
-                }
+            foreach($department as $org){
+                DepartmentUser::create(['user_account_id' => $org->user_account_id, 'department_id' => $request->department_id]);
             }
         }
-        
+
         Department::destroy($id);
         return response()->json(['msg' => 'Department deleted successfully!']);
     }

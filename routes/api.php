@@ -109,7 +109,8 @@ Route::group(['middleware' => 'api'], function (){
         Route::put('departments/role/{id}', [DepartmentandOrganizationController::class, 'updateDepRole']);
         Route::post('departments/role/{id}', [DepartmentandOrganizationController::class, 'deleteDepRoles']);
         Route::post('uploadDepartmentImage', [DepartmentandOrganizationController::class, 'uploadDepartmentImage']);
-
+        
+        Route::get('organization/all', [DepartmentandOrganizationController::class, 'allOrganizations']);
         Route::post('organizations/role', [DepartmentandOrganizationController::class, 'storeOrgRole']);
         Route::post('search/organization', [DepartmentandOrganizationController::class, 'searchOrganization']);
         Route::post('search/orgAccounts', [AccountController::class, 'searchOrganizationAccounts']);
@@ -118,8 +119,9 @@ Route::group(['middleware' => 'api'], function (){
         Route::get('organizations/roles', [DepartmentandOrganizationController::class, 'orgRoles']);
         Route::post('organizations/role/{id}', [DepartmentandOrganizationController::class, 'deleteOrgRoles']);
         Route::post('uploadOrganizationImage', [DepartmentandOrganizationController::class, 'uploadOrganizationImage']);
-
+        
         //ORGANIZATION AND DEPARTMENTS
+        Route::get('department/all', [DepartmentandOrganizationController::class, 'allDepartments']);
         Route::get('departments', [DepartmentandOrganizationController::class, 'department']);
         Route::post('departments', [DepartmentandOrganizationController::class, 'storeDepartment']);
         Route::post('search/department', [DepartmentandOrganizationController::class, 'searchDepartment']);

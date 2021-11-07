@@ -153,7 +153,6 @@ class AccountController extends Controller
             'last_name' => $request->last_name,
             'gender' => $request->gender,
             'contact_number' => $request->contact_number,
-            'org_unit_id' => $request->org_unit_id,
             'org_unit_role_id' => $request->role_id,
         ];
 
@@ -164,8 +163,18 @@ class AccountController extends Controller
         $userinfo->update($info);
         
         $useraccount = UserAccount::find($id);
-        $useraccount->update(['email' => $request->email, 'status' => $request->status]);
+        $useraccount->update(['email' => $request->email]);
         $info['email'] = $request->email;
+
+        if($request->account_type == 'Organization'){
+            OrganizationUser::where('user_account_id', $id)->delete();
+            OrganizationUser::create(['user_account_id' => $id, 'organization_id' => $request->org_unit_id]);
+        }
+
+        if($request->account_type == 'Department'){
+            DepartmentUser::where('user_account_id', $id)->delete();
+            DepartmentUser::create(['user_account_id' => $id, 'department_id' => $request->org_unit_id]);
+        }
         
         if($request->emailNotif){
             Mail::to($useraccount->email)->send(new UpdatedAccountMail($info));
