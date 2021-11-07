@@ -2,13 +2,16 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\MassPrunable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 
 class Post extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes, MassPrunable;
     public $guarded = [];
 
     public function useraccount(){
@@ -30,4 +33,9 @@ class Post extends Model
         return $newCount > 0 ? "$slug-$newCount" : $slug;
     }
 
+    public function prunable()
+    {
+        $sched = TaskSchedule::where('task', 'Post Deletion')->first();
+        return static::withTrashed()->whereNotNull('deleted_at')->where('deleted_at', '<=', now()->subDays($sched->deletion));     
+    }
 }

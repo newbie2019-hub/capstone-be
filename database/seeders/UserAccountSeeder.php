@@ -169,7 +169,7 @@ class UserAccountSeeder extends Seeder
 
         $user8 = UserAccount::create([
             'user_info_id' => $userinfo8->id,
-            'email' => 'rommelverecio@gmail.com',
+            'email' => 'rommelvereciodummy@gmail.com',
             'password' => Hash::make('123123'),
             'status' => 'Approved',
             'type' => 'Department'
@@ -192,7 +192,7 @@ class UserAccountSeeder extends Seeder
 
         $user9 = UserAccount::create([
             'user_info_id' => $userinfo9->id,
-            'email' => 'raphydalan@gmail.com',
+            'email' => 'raphydalandummy@gmail.com',
             'password' => Hash::make('123123'),
             'status' => 'Pending',
             'type' => 'Department'
@@ -215,7 +215,7 @@ class UserAccountSeeder extends Seeder
 
         $userinfo10 = UserAccount::create([
             'user_info_id' => $userinfo10->id,
-            'email' => 'dennistibe@gmail.com',
+            'email' => 'dennistibedummy@gmail.com',
             'password' => Hash::make('123123'),
             'status' => 'Approved',
             'type' => 'Department'

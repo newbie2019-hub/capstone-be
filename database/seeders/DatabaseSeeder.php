@@ -34,6 +34,7 @@ class DatabaseSeeder extends Seeder
             CourseObjectiveSeeder::class,
             UserAccountSeeder::class,
             PermissionRoleSeeder::class,
+            TaskSeeder::class,
         ]);
     }
 }

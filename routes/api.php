@@ -9,6 +9,7 @@ use App\Http\Controllers\FaqController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\InformationKioskController;
 use App\Http\Controllers\OrganizationController;
+use App\Http\Controllers\OSAArchivedPostController;
 use App\Http\Controllers\OSAFAQsController;
 use App\Http\Controllers\OSAOrganizationController;
 use App\Http\Controllers\OSATelDirectoryController;
@@ -185,12 +186,14 @@ Route::group(['middleware' => 'api'], function (){
         //POSTS
         Route::put('post/approve/{id}', [PostController::class, 'approvePost']);
         Route::get('posts', [PostController::class, 'posts']);
-        Route::get('type', [PostController::class, 'type']);
         Route::post('post', [PostController::class, 'store']);
         Route::post('search/post', [PostController::class, 'searchPost']);
         Route::put('posts/{id}', [PostController::class, 'updatePost']);
         Route::delete('post/destroy/{id}', [PostController::class, 'deletePost']);
         Route::post('uploadPostImage', [PostController::class, 'uploadPostImage']);
+        Route::get('osa/post', [PostController::class, 'OSAPostSummary']);
+        Route::post('setSchedule', [PostController::class, 'setSchedule']);
+        Route::post('getSchedule', [PostController::class, 'getSchedule']);
 
         //DASHBOARD
         Route::get('accountSummary', [UserDashboardController::class, 'accountMembers']);
@@ -221,6 +224,7 @@ Route::group(['middleware' => 'api'], function (){
 
         //ORGANIZATIONS - OSA
         Route::apiResource('osa/organizations', OSAOrganizationController::class);
+        Route::apiResource('osa/archived', OSAArchivedPostController::class);
     });
 
 });

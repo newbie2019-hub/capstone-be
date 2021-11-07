@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\UserInfo;
 use App\Models\Post;
 use App\Models\PostContent;
+use App\Models\TaskSchedule;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Str;
 
@@ -15,6 +16,14 @@ class PostController extends Controller
     public function __construct()
     {
         $this->middleware('auth:api', ['except' => ['uploadPostImage']]);
+    }
+
+    public function OSAPostSummary(){
+        $post = Post::whereHas('useraccount', function($query){
+            $query->where('type', 'Organization');
+        })->with(['postcontent:id,image,title,content', 'useraccount.userinfo'])->latest()->take(4)->get(['id','user_account_id','post_content_id','status','views','created_at']);
+
+        return response()->json($post);
     }
 
     public function posts()
@@ -51,11 +60,13 @@ class PostController extends Controller
 
     public function store(Request $request){
 
+        $post_excerpt = Str::limit($request->post_excerpt, 147, '...');
+
         $postcontent = PostContent::create([
             'title' => $request->title,
             'content' => $request->content,
             'image' => $request->image,
-            'post_excerpt' => Str::limit($request->post_excerpt, 120, '...'),
+            'post_excerpt' => $post_excerpt
         ]);
 
         if($postcontent){
@@ -106,6 +117,25 @@ class PostController extends Controller
     public function searchPost(Request $request){
         $posts = PostContent::where('title', 'like', '%'.$request->search.'%')->orWhere('content', 'like', '%'.$request->search.'%')->paginate(5);
         return response()->json($posts);
+    }
+
+    public function getSchedule(){
+        return response()->json(TaskSchedule::where('task', 'Post Deletion')->first());
+    }
+
+    public function setSchedule(Request $request){
+        $task = TaskSchedule::where('task', 'Post Deletion')->first();
+        if($task){
+            $task->update(['deletion' => $request->schedule]);
+        }
+        else {
+            TaskSchedule::create([
+                'task' => 'Post Deletion',
+                'deletion' => $request->schedule,
+            ]);
+        }
+
+        return response()->json(['msg' => 'Schedule set successfully!']);
     }
 
 }

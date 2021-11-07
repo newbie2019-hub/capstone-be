@@ -20,6 +20,7 @@ class CreatePostsTable extends Migration
             $table->string('status', 15)->default('Pending');
             $table->foreignId('post_content_id')->constrained()->onDelete('cascade');
             $table->foreignId('user_account_id')->constrained()->onDelete('cascade');
+            $table->softDeletes();
             $table->timestamps();
         });
     }

@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreatePostContentsTable extends Migration
+class CreateTaskSchedulesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,13 +13,10 @@ class CreatePostContentsTable extends Migration
      */
     public function up()
     {
-        Schema::create('post_contents', function (Blueprint $table) {
+        Schema::create('task_schedules', function (Blueprint $table) {
             $table->id();
-            $table->string('title');
-            $table->string('image')->nullable();
-            $table->string('post_excerpt', 150);
-            $table->longText('content');
-            $table->softDeletes();
+            $table->string('task', 200);
+            $table->string('deletion');
             $table->timestamps();
         });
     }
@@ -31,6 +28,6 @@ class CreatePostContentsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('post_contents');
+        Schema::dropIfExists('task_schedules');
     }
 }

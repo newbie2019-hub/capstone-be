@@ -50,7 +50,6 @@ class AccountController extends Controller
 
     public function unitAccounts(){
         $unitaccount = DepartmentUser::with(['user', 'user.userinfo', 'department', 'user.userinfo.role'])->paginate(8);
-        // $unitaccount = UserAccount::with(['userinfo', 'userinfo.department', 'userinfo.role'])->where('type', 'Department')->paginate(8);
         return response()->json($unitaccount);
     }
 

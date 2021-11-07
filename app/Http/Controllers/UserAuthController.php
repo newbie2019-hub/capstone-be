@@ -145,6 +145,8 @@ class UserAuthController extends Controller
             return response()->json(['msg' => 'Incorrect Password'], 422);
         }
         else {
+            $account_info = UserInfo::where('id', auth()->guard('api')->user()->id)->first();
+
             $data = [
                 'first_name' => $request->first_name,
                 'middle_name' => $request->middle_name,
@@ -155,9 +157,11 @@ class UserAuthController extends Controller
 
             if($request->image){
                 $data['image'] = $request->image;
+                if($account_info->image){
+                    $this->deleteFileFromServer($account_info->image);
+                }
             }
-
-            $account_info = UserInfo::where('id', auth()->guard('api')->user()->id)->first();
+            
             $account_info->update($data);
 
             $account = UserAccount::where('id', auth()->guard('api')->user()->id)->first();
@@ -262,5 +266,14 @@ class UserAuthController extends Controller
         $picName = time().'.'.$request->file->extension();
         $request->file->move(public_path('uploads'), $picName);
         return $picName;
+    }
+
+    //USED WITH DELETING POST
+    public function deleteFileFromServer($filename){
+        $filePath = public_path().'/uploads/'.$filename;
+        if(file_exists($filePath)){
+            @unlink($filePath);
+        }
+        return;
     }
 }
