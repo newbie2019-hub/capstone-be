@@ -56,7 +56,7 @@ class UserAuthController extends Controller
            ->with(['user.userinfo'])->first();
 
            if($orgUserExist){
-               if($orgUserExist->user->userinfo->org_unit_role_id != 9){
+               if($orgUserExist->user->userinfo->org_unit_role_id != 8){
                    return response()->json(['msg' => 'Error! User with the selected position on the organization already exist'], 422);
                }
            }
