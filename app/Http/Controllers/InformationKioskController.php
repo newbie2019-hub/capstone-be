@@ -5,9 +5,11 @@ namespace App\Http\Controllers;
 use App\Models\College;
 use App\Models\CoreValues;
 use App\Models\Course;
+use App\Models\Department;
 use App\Models\Faqs;
 use App\Models\Organization;
 use App\Models\OrgUnit;
+use App\Models\Post;
 use App\Models\SchoolOfficials;
 use App\Models\TelephoneDirectory;
 use App\Models\Unit;
@@ -21,11 +23,15 @@ class InformationKioskController extends Controller
     }
 
     public function organizations(){
-        return response()->json(OrgUnit::where('type', 'Organization')->get());
+        return response()->json(Organization::get());
+    }
+
+    public function posts(){
+        return response()->json(Post::with(['postcontent', 'useraccount.userinfo'])->where('status', 'Approved')->latest()->take(15)->get());
     }
 
     public function departments(){
-        return response()->json(OrgUnit::where('type', 'Department')->get());
+        return response()->json(Department::get());
     }
 
     public function corevalues(){
