@@ -27,7 +27,7 @@ class InformationKioskController extends Controller
     }
 
     public function posts(){
-        return response()->json(Post::with(['postcontent', 'useraccount.userinfo'])->where('status', 'Approved')->latest()->take(15)->get());
+        return response()->json(Post::with(['postcontent', 'useraccount.userinfo', 'useraccount.userinfo.role', 'useraccount.userinfo.organization', 'useraccount.userinfo.department'])->where('status', 'Approved')->latest()->take(15)->get());
     }
 
     public function departments(){

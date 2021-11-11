@@ -60,7 +60,7 @@ class PostController extends Controller
 
     public function store(Request $request){
 
-        $post_excerpt = Str::limit($request->post_excerpt, 196, ' ...');
+        $post_excerpt = Str::limit($request->post_excerpt, 146, ' ...');
 
         $postcontent = PostContent::create([
             'title' => $request->title,

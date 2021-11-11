@@ -17,7 +17,7 @@ class CreatePostContentsTable extends Migration
             $table->id();
             $table->string('title');
             $table->string('image')->nullable();
-            $table->string('post_excerpt', 200);
+            $table->string('post_excerpt', 150);
             $table->longText('content');
             $table->softDeletes();
             $table->timestamps();
