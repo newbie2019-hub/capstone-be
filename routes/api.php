@@ -243,6 +243,8 @@ Route::get('schoolofficials', [InformationKioskController::class, 'schoolofficia
 Route::get('teldirectories', [InformationKioskController::class, 'teldirectories']);
 Route::get('courses', [InformationKioskController::class, 'courses']);
 Route::get('posts', [InformationKioskController::class, 'posts']);
+Route::post('requestOrgPost', [InformationKioskController::class, 'requestOrgPost']);
+Route::post('requestDepPost', [InformationKioskController::class, 'requestDepPost']);
 Route::post('review', [RateController::class, 'store']);
 Route::post('request/account/reset', [UserAuthController::class, 'reset']);
 Route::post('request/check/reset', [UserAuthController::class, 'checkResetRequest']);

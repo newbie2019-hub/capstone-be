@@ -23,11 +23,25 @@ class InformationKioskController extends Controller
     }
 
     public function organizations(){
-        return response()->json(Organization::get());
+        return response()->json(Organization::with(['members', 'members.posts'])->get());
     }
 
     public function posts(){
-        return response()->json(Post::with(['postcontent', 'useraccount.userinfo', 'useraccount.userinfo.role', 'useraccount.userinfo.organization', 'useraccount.userinfo.department'])->where('status', 'Approved')->latest()->take(15)->get());
+        return response()->json(Post::with(['postcontent', 'useraccount.userinfo', 'useraccount.userinfo.role', 'useraccount.userinfo.organization', 'useraccount.userinfo.department'])->where('status', 'Approved')->where('created_at', '>=', now()->subDays(7))->latest()->take(15)->get());
+    }
+    
+    public function requestOrgPost(){
+        return response()->json(Post::whereHas('useraccount.userinfo.organization', function($query){
+            $query->where('name', request()->get('name'));
+        })->with(['postcontent', 'useraccount.userinfo', 'useraccount.userinfo.role', 'useraccount.userinfo.organization', 'useraccount.userinfo.department'])->where('status', 'Approved')
+        ->where('created_at', '>=', now()->subDays(7))->latest()->take(15)->get());
+    }
+    
+    public function requestDepPost(){
+        return response()->json(Post::whereHas('useraccount.userinfo.department', function($query){
+            $query->where('name', request()->get('name'));
+        })->with(['postcontent', 'useraccount.userinfo', 'useraccount.userinfo.role', 'useraccount.userinfo.department', 'useraccount.userinfo.department'])->where('status', 'Approved')
+        ->where('created_at', '>=', now()->subDays(7))->latest()->take(15)->get());
     }
 
     public function departments(){
