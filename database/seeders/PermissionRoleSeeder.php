@@ -52,7 +52,7 @@ class PermissionRoleSeeder extends Seeder
         }
 
         //1,3,7,8,11,14,18,19,20
-        $permission = [1,3,7,8,11,14,18,19,20];
+        $permission = [1,3,7,8,11,18,19,20];
         for($role = 2; $role <= 8; $role++){
             for($p = 0; $p < count($permission); $p++){
                 PermissionRole::create([

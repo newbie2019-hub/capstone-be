@@ -69,12 +69,18 @@ class PostController extends Controller
             'post_excerpt' => $post_excerpt
         ]);
 
+        $post = [
+            'slug' => $request->title,
+            'post_content_id' => $postcontent->id,
+            'user_account_id' => auth()->guard('api')->user()->id
+        ];
+
+        if(auth()->user()->userinfo->role->role == 'President' || auth()->user()->userinfo->role->role == 'Unit Chair'){
+            $post['status'] = 'Approved';
+        }
+
         if($postcontent){
-            Post::create([
-                'slug' => $request->title,
-                'post_content_id' => $postcontent->id,
-                'user_account_id' => auth()->guard('api')->user()->id
-            ]);
+            Post::create($post);
         }
 
         return response()->json(['msg' => 'Announcement added successfully!'], 200);
