@@ -87,12 +87,14 @@ class PostController extends Controller
     }
     
     public function updatePost(Request $request, $id){
+        $post_excerpt = Str::limit($request->post_excerpt, 146, ' ...');
+
         $postcontent = PostContent::findOrFail($id);
 
         $content = [
             'title' => $request->title,
             'content' => $request->content,
-            'post_excerpt' => $request->post_excerpt
+            'post_excerpt' => $post_excerpt
         ];
 
         if($request->image){
@@ -114,8 +116,7 @@ class PostController extends Controller
     }
 
     public function deletePost($id){
-        $post = PostContent::findOrFail($id);
-        Post::where('post_content_id',$id)->delete();
+        $post = Post::find($id);
         $post->delete();
         return response()->json(['success' => 'Post deleted successfully']);
     }

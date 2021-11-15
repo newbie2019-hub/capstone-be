@@ -7,12 +7,29 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\MassPrunable;
 use Illuminate\Database\Eloquent\Model;
+use Spatie\Activitylog\Traits\LogsActivity;
 use Illuminate\Support\Str;
+use Spatie\Activitylog\LogOptions;
 
 class Post extends Model
-{
-    use HasFactory, SoftDeletes, MassPrunable;
+{ 
+    use LogsActivity, HasFactory, SoftDeletes, MassPrunable;
+
     public $guarded = [];
+    protected static $logFillable = true;
+    protected static $logAttributes = ['*'];
+
+    public function getDescriptionForEvent(string $eventName): string
+    {
+        return "A post has been {$eventName}.";
+    }
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+        ->logOnly(['status', 'created_at', 'user_account_id', 'post_content_id'])
+        ->useLogName('Post');
+    }
 
     public function useraccount(){
         return $this->belongsTo(UserAccount::class,'user_account_id', 'id');

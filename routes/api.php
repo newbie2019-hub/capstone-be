@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AccountController;
+use App\Http\Controllers\ActivityLog;
 use App\Http\Controllers\AdminAuthController;
 use App\Http\Controllers\AdminUpdateController;
 use App\Http\Controllers\DashboardController;
@@ -65,6 +66,7 @@ Route::group(['middleware' => 'api'], function (){
         Route::get('organization/advisers', [OrganizationController::class, 'retrieveAdviser']);
         Route::post('organization/search', [OrganizationController::class, 'searchOrgMembers']);
         Route::apiResource('organization', OrganizationController::class);
+        Route::apiResource('activity-logs', ActivityLog::class);
 
         Route::post('permissions/search', [RolePermissionController::class, 'searchRole']);
         Route::get('permissions/all', [RolePermissionController::class, 'all']);
