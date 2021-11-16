@@ -119,34 +119,71 @@ class UniversityInfoController extends Controller
     }
 
     public function colleges(){
-        $college = College::paginate(5);
+        $college = College::with(['goals:id,college_id,goal', 'objectives:id,college_id,objective'])->paginate(8);
         return response()->json($college);
     }
 
     public function searchCollege(Request $request){
-        $college = College::where('name', 'like', '%'.$request->search.'%')->paginate(5);
+        $college = College::with(['goals:id,college_id,goal', 'objectives:id,college_id,objective'])->where('name', 'like', '%'.$request->search.'%')->paginate(5);
         return response()->json($college);
     }
 
     public function storeCollege(Request $request){
-        College::create([
-            'name' => $request->name, 
+        $college = College::create([
+            'name' => $request->college, 
             'abbreviation' => $request->abbreviation, 
             'dean' => $request->dean,
-            'goals' => $request->goals,
         ]);
+
+        foreach($request->objectives as $objective){
+            if($objective['objective']){
+                Objective::create([
+                    'objective' => $objective['objective'],
+                    'college_id' => $college->id
+                ]);
+            }
+        }
+
+        foreach($request->goals as $goal){
+            if($goal['goal']){
+                Goal::create([
+                    'goal' => $goal['goal'],
+                    'college_id' => $college->id
+                ]);
+            }
+        }
 
         return response()->json(['success' => 'College added successfully']);
     }
 
     public function updateCollege(Request $request, $id){
+        Objective::where('college_id', $id)->delete();
+        Goal::where('college_id', $id)->delete();
+
         $college = College::where('id', $id)->first();
         $college->update([
             'name' => $request->name, 
             'abbreviation' => $request->abbreviation, 
             'dean' => $request->dean,
-            'goals' => $request->goals,
         ]);
+
+        foreach($request->objectives as $objective){
+            if($objective['objective']){
+                Objective::create([
+                    'objective' => $objective['objective'],
+                    'college_id' => $college->id
+                ]);
+            }
+        }
+
+        foreach($request->goals as $goal){
+            if($goal['goal']){
+                Goal::create([
+                    'goal' => $goal['goal'],
+                    'college_id' => $college->id
+                ]);
+            }
+        }
         
         return response()->json(['success' => 'College updated successfully']);
     }
@@ -216,89 +253,6 @@ class UniversityInfoController extends Controller
         return response()->json(['success' => 'Course deleted successfully']);
     }
 
-    public function courseObjectives(){
-        $courseobjective = CourseObjective::with('course')->paginate(8);
-        return response()->json($courseobjective);
-    }
-
-    public function updateCourseObjective(Request $request, $id){
-        $courseobjective = CourseObjective::where('id', $id)->first();
-        $courseobjective->update([
-            'course_objective' => $request->objective
-        ]);
-        
-        return response()->json(['success' => 'Course Objective updated successfully']);
-    }
-
-    public function deleteCourseObjective($id){
-        CourseObjective::destroy($id);
-        return response()->json(['success' => 'Course Objective deleted successfully']);
-    }
-
-    public function goals(){
-        $goals = Goal::with('college:id,name,abbreviation')->paginate(5);
-        return response()->json($goals);
-    }
-
-    public function searchGoal(Request $request){
-        $goals = Goal::with('college:id,name,abbreviation')->where('goal', 'like', '%'.$request->searchgoal.'%')->paginate(5);
-        return response()->json($goals);
-    }
-
-    public function storeGoal(Request $request){
-        Goal::create([
-            'goal' => $request->goal_content, 
-            'college_id' => $request->academic
-        ]);
-
-        return response()->json(['success' => 'Goal added successfully']);
-    }
-
-    public function updateGoal(Request $request, $id){
-        $goals = Goal::where('id', $id)->first();
-        $goals->update(['goal' => $request->goal,]);
-        
-        return response()->json(['success' => 'Goal updated successfully']);
-    }
-
-    public function deleteGoal($id){
-        Goal::destroy($id);
-        return response()->json(['success' => 'Goal deleted successfully']);
-    }
-
-    // public function objectives(){
-    //     $objectives = Objective::with('college:id,name,abbreviation')->paginate(8);
-    //     return response()->json($objectives);
-    // }
-
-    // public function searchObjective(Request $request){
-    //     $objectives = Objective::with('college:id,name,abbreviation')->where('objective', 'like', '%'.$request->searchobjective.'%')->paginate(8);
-    //     return response()->json($objectives);
-    // }
-
-    // public function storeObjective(Request $request){
-    //     Objective::create([
-    //         'objective' => $request->objective_content, 
-    //         'college_id' => $request->academic
-    //     ]);
-
-    //     return response()->json(['success' => 'Objective added successfully']);
-    // }
-
-    // public function updateObjective(Request $request, $id){
-    //     $objectives = Objective::where('id', $id)->first();
-    //     $objectives->update([
-    //         'objective' => $request->objective, 
-    //     ]);
-        
-    //     return response()->json(['success' => 'Objective updated successfully']);
-    // }
-
-    // public function deleteObjective($id){
-    //     Objective::destroy($id);
-    //     return response()->json(['success' => 'Objective deleted successfully']);
-    // }
-    
     public function destroy($id){
         SchoolOfficials::destroy($id);
         return response()->json(['msg' => 'School Official deleted successfully'], 200);

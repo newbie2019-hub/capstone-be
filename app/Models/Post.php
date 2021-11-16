@@ -27,7 +27,7 @@ class Post extends Model
     public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()
-        ->logOnly(['status', 'created_at', 'user_account_id', 'post_content_id'])
+        ->logOnly(['id','status', 'created_at', 'user_account_id', 'post_content_id'])
         ->useLogName('Post');
     }
 

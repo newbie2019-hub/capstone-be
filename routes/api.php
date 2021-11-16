@@ -66,6 +66,7 @@ Route::group(['middleware' => 'api'], function (){
         Route::get('organization/advisers', [OrganizationController::class, 'retrieveAdviser']);
         Route::post('organization/search', [OrganizationController::class, 'searchOrgMembers']);
         Route::apiResource('organization', OrganizationController::class);
+        Route::post('search/activity-logs', [ActivityLog::class, 'search']);
         Route::apiResource('activity-logs', ActivityLog::class);
 
         Route::post('permissions/search', [RolePermissionController::class, 'searchRole']);

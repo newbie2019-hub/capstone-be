@@ -26,7 +26,7 @@ class PostContent extends Model
     public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()        
-        ->logOnly(['title', 'image', 'post_excerpt', 'content', 'created_at'])
+        ->logOnly(['id', 'title', 'image', 'post_excerpt', 'content', 'created_at'])
         ->useLogName('Post Content');
     }
 

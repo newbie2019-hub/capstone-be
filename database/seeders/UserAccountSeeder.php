@@ -194,7 +194,7 @@ class UserAccountSeeder extends Seeder
             'user_info_id' => $userinfo9->id,
             'email' => 'raphydalandummy@gmail.com',
             'password' => Hash::make('123123'),
-            'status' => 'Pending',
+            'status' => 'Approved',
             'type' => 'Department'
         ]);
 

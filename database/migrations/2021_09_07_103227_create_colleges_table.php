@@ -17,7 +17,6 @@ class CreateCollegesTable extends Migration
             $table->id();
             $table->string('name');
             $table->string('dean')->nullable();
-            $table->string('units')->nullable();
             $table->string('abbreviation');
             $table->timestamps();
         });
