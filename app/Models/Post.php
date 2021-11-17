@@ -21,7 +21,7 @@ class Post extends Model
 
     public function getDescriptionForEvent(string $eventName): string
     {
-        return "A post has been {$eventName}.";
+        return "Post has been {$eventName}.";
     }
 
     public function getActivitylogOptions(): LogOptions

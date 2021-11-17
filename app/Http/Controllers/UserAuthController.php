@@ -139,7 +139,7 @@ class UserAuthController extends Controller
         activity('User Logout')->withProperties(['email' => auth()->user()->email, 'ip' => request()->ip()])
         ->causedBy(auth('api')->user()->id)
         ->event('logout')
-        ->log('A user has logged out');
+        ->log('User has logged out');
 
         auth('api')->logout();
         return response()->json(['message' => 'User logged out successfully!']);

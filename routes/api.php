@@ -18,6 +18,7 @@ use App\Http\Controllers\RateController;
 use App\Http\Controllers\RolePermissionController;
 use App\Http\Controllers\SchoolOfficialsController;
 use App\Http\Controllers\UniversityInfoController;
+use App\Http\Controllers\UserActivityLog;
 use App\Http\Controllers\UserAuthController;
 use App\Http\Controllers\UserDashboardController;
 use App\Http\Controllers\UserMemberController;
@@ -67,7 +68,7 @@ Route::group(['middleware' => 'api'], function (){
         Route::post('organization/search', [OrganizationController::class, 'searchOrgMembers']);
         Route::apiResource('organization', OrganizationController::class);
         Route::post('search/activity-logs', [ActivityLog::class, 'search']);
-        Route::apiResource('activity-logs', ActivityLog::class);
+        Route::get('activity-logs', [ActivityLog::class, 'index']);
 
         Route::post('permissions/search', [RolePermissionController::class, 'searchRole']);
         Route::get('permissions/all', [RolePermissionController::class, 'all']);
@@ -188,6 +189,11 @@ Route::group(['middleware' => 'api'], function (){
     });
 
     Route::group(['prefix' => 'user'], function (){
+        //LOGS
+        Route::post('search/activity-logs', [UserActivityLog::class, 'search']);
+        Route::get('activity-logs', [UserActivityLog::class, 'index']);
+        Route::get('summary/activity-logs', [UserActivityLog::class, 'summary']);
+
         //POSTS
         Route::put('post/approve/{id}', [PostController::class, 'approvePost']);
         Route::get('posts', [PostController::class, 'posts']);

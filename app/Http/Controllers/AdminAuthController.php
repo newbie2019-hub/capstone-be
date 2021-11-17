@@ -39,14 +39,14 @@ class AdminAuthController extends Controller
 
                     $loggeduser = UserAccount::where('email', $request->email)->first();
                     activity('User Login')->causedBy($loggeduser->id)->withProperties(['email' => $request->email, 'ip' => request()->ip()])->event('login failed')
-                    ->log('A user attempted to login');
+                    ->log('User attempted to login');
 
                     return response()->json(['error' => 'Unauthorized'], 401);
                 }
                 activity('User Login')->withProperties(['email' => $request->email, 'ip' => request()->ip()])
                 ->causedBy(auth('api')->user()->id)
                 ->event('login success')
-                ->log('A user successfully logged in');
+                ->log('User successfully logged in');
 
                 $type = 'user';
                 $route = 'user/dashboard';

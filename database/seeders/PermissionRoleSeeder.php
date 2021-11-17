@@ -62,17 +62,18 @@ class PermissionRoleSeeder extends Seeder
             }
         }
 
-        for($p = 0; $p < count($permission); $p++){
+        $permissionDepartment = [1,3,7,8,11,14,18,19,20];
+        for($p = 0; $p < count($permissionDepartment); $p++){
             PermissionRole::create([
                 'org_unit_role_id' => 10,
-                'permission_id' => $permission[$p],
+                'permission_id' => $permissionDepartment[$p],
             ]);
         }
 
-        for($p = 0; $p < count($permission); $p++){
+        for($p = 0; $p < count($permissionDepartment); $p++){
             PermissionRole::create([
                 'org_unit_role_id' => 11,
-                'permission_id' => $permission[$p],
+                'permission_id' => $permissionDepartment[$p],
             ]);
         }
 
