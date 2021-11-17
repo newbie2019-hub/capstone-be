@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\AdminAccount;
 use App\Models\AdminAccountInfo;
+use App\Models\UserAccount;
+use App\Models\UserInfo;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
@@ -17,11 +19,31 @@ class AdminAuthController extends Controller
     public function login(Request $request)
     {
 
-        if (! $token = auth()->guard('admin')->attempt(['email' => $request->email, 'password' => $request->password])) {
-            return response()->json(['error' => 'Unauthorized'], 401);
+        $isAdmin = AdminAccount::where('email', $request->email)->first();
+
+        if($isAdmin){
+            $type = 'admin';
+            if (! $token = auth()->guard('admin')->attempt(['email' => $request->email, 'password' => $request->password])) {
+                return response()->json(['error' => 'Unauthorized'], 401);
+            }
+            $route = 'home/dashboard';
+        }
+        else {
+            $user = UserAccount::where('email', $request->email)->where('status', 'Pending')->first();
+            
+            if($user) {
+                return response()->json(['msg' => 'Your account is still on Pending state'], 422);
+            }
+            else{
+                if (! $token = auth()->guard('api')->attempt(['email' => $request->email, 'password' => $request->password])) {
+                    return response()->json(['error' => 'Unauthorized'], 401);
+                }
+                $type = 'user';
+                $route = 'user/dashboard';
+            }
         }
 
-        return $this->respondWithToken($token);
+        return $this->respondWithToken($token, $type, $route);
     }
 
     public function me()
@@ -84,16 +106,31 @@ class AdminAuthController extends Controller
         return $this->respondWithToken(auth()->refresh());
     }
 
-    protected function respondWithToken($token)
+    protected function respondWithToken($token, $type, $route)
     {
-        $user = AdminAccountInfo::where('id', auth('admin')->user()->id)->first();
-
-        return response()->json([
-            'access_token' => $token,
-            'token_type' => 'bearer',
-            'expires_in' => auth('admin')->factory()->getTTL() * 60,
-            'user_info' => $user,
-            'user_account' => auth('admin')->user(),
-        ]);
+        
+        if($type == 'admin'){
+            $user = AdminAccountInfo::where('id', auth('admin')->user()->id)->first();
+            return response()->json([
+                'access_token' => $token,
+                'token_type' => 'bearer',
+                'expires_in' => auth('admin')->factory()->getTTL() * 60,
+                'user_info' => $user,
+                'route' => $route,
+                'type' => $type,
+                'user_account' => auth('admin')->user(),
+            ]);
+        }
+        else {
+            $user = UserInfo::where('id', auth()->guard('api')->user()->id)->first();
+            return response()->json([
+                'access_token' => $token,
+                'token_type' => 'bearer',
+                'expires_in' => auth('api')->factory()->getTTL() * 60,
+                'route' => $route,
+                'user_info' => $user,
+                'user_account' => auth('api')->user(),
+            ]);
+        }
     }
 }
