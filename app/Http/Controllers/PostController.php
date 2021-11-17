@@ -53,6 +53,12 @@ class PostController extends Controller
         $post = Post::where('id', $id)->first();
         if($post){
             $post->update(['status' => 'Approved']);
+
+            activity('Post Approval')
+            ->causedBy(auth('api')->user()->id)
+            ->event('approval')
+            ->performedOn($id)
+            ->log('Post has been approved');
         }
 
         return response()->json(['msg' => 'Post has been approved'], 200);
@@ -70,7 +76,6 @@ class PostController extends Controller
         ]);
 
         $post = [
-            'slug' => $request->title,
             'post_content_id' => $postcontent->id,
             'user_account_id' => auth()->guard('api')->user()->id
         ];
@@ -79,11 +84,9 @@ class PostController extends Controller
             $post['status'] = 'Approved';
         }
 
-        if($postcontent){
-            Post::create($post);
-        }
+        Post::create($post);
 
-        return response()->json(['msg' => 'Announcement added successfully!'], 200);
+        return response()->json(['msg' => 'Post added successfully!'], 200);
     }
     
     public function updatePost(Request $request, $id){
@@ -102,9 +105,6 @@ class PostController extends Controller
         } 
 
         $postcontent->update($content);
-
-        $post = Post::findOrFail($id);
-        $post->update(['slug' => $request->title]);
 
         return response()->json(['success' => 'Post updated successfully']);
     }

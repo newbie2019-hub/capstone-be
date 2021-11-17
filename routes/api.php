@@ -4,6 +4,7 @@ use App\Http\Controllers\AccountController;
 use App\Http\Controllers\ActivityLog;
 use App\Http\Controllers\AdminAuthController;
 use App\Http\Controllers\AdminUpdateController;
+use App\Http\Controllers\ArchiveAccounts;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DepartmentandOrganizationController;
 use App\Http\Controllers\FaqController;
@@ -63,6 +64,12 @@ Route::group(['middleware' => 'api', 'prefix' => 'auth'], function () {
 Route::group(['middleware' => 'api'], function (){
 
     Route::group(['prefix' => 'admin'], function (){
+        //ARCHIVE
+        Route::get('archive/org_accounts', [ArchiveAccounts::class, 'orgAccounts']);
+        Route::get('archive/unit_accounts', [ArchiveAccounts::class, 'unitAccounts']);
+        Route::post('archive/search/orgAccounts', [ArchiveAccounts::class, 'searchOrganizationAccounts']);
+        Route::post('archive/search/depAccounts', [ArchiveAccounts::class, 'searchDepartmentAccounts']);
+
         Route::post('organization/set/adviser', [OrganizationController::class, 'setAdviser']);
         Route::get('organization/advisers', [OrganizationController::class, 'retrieveAdviser']);
         Route::post('organization/search', [OrganizationController::class, 'searchOrgMembers']);

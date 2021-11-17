@@ -22,6 +22,7 @@ class CreateUserInfosTable extends Migration
             $table->string('contact_number');
             $table->foreignId('org_unit_role_id')->constrained()->onDelete('cascade');
             $table->string('image')->nullable();
+            $table->softDeletes();
             $table->timestamps();
         });
     }

@@ -16,6 +16,7 @@ class CreateDepartmentUsersTable extends Migration
         Schema::create('department_users', function (Blueprint $table) {
             $table->foreignId('department_id')->constrained()->onDelete('cascade');
             $table->foreignId('user_account_id')->constrained()->onDelete('cascade');
+            $table->softDeletes();
             $table->timestamps();
         });
     }

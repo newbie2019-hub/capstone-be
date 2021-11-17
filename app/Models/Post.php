@@ -9,15 +9,17 @@ use Illuminate\Database\Eloquent\MassPrunable;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\Activitylog\Traits\LogsActivity;
 use Illuminate\Support\Str;
+use Dyrynda\Database\Support\CascadeSoftDeletes;
 use Spatie\Activitylog\LogOptions;
 
 class Post extends Model
 { 
-    use LogsActivity, HasFactory, SoftDeletes, MassPrunable;
+    use LogsActivity, HasFactory, SoftDeletes, MassPrunable, CascadeSoftDeletes;
 
     public $guarded = [];
     protected static $logFillable = true;
     protected static $logAttributes = ['*'];
+    protected $cascadeDeletes = ['postcontent'];
 
     public function getDescriptionForEvent(string $eventName): string
     {

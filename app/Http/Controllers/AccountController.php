@@ -185,6 +185,15 @@ class AccountController extends Controller
 
     public function destroy($id){
         UserAccount::destroy($id);
+        $orguser = OrganizationUser::where('user_account_id', $id)->first();
+        if($orguser){
+            OrganizationUser::where('user_account_id', $id)->delete();
+        }
+        
+        $depuser = DepartmentUser::where('user_account_id', $id)->first();
+        if($depuser){
+            DepartmentUser::where('user_account_id', $id)->delete();
+        }
         return response()->json(['msg' => 'User account deleted successfully!'], 200); 
     }
 

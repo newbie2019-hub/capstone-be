@@ -16,7 +16,6 @@ class CreatePostsTable extends Migration
         Schema::create('posts', function (Blueprint $table) {
             $table->id();
             $table->integer('views')->default(0);
-            $table->longText('slug');
             $table->string('status', 15)->default('Pending');
             $table->foreignId('post_content_id')->constrained()->onDelete('cascade');
             $table->foreignId('user_account_id')->constrained()->onDelete('cascade');

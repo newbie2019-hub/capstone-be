@@ -101,6 +101,15 @@ class UserMemberController extends Controller
 
     public function destroy($id){
         UserAccount::destroy($id);
+        $orguser = OrganizationUser::where('user_account_id', $id)->first();
+        if($orguser){
+            $orguser->delete();
+        }
+        
+        $depuser = DepartmentUser::where('user_account_id', $id)->first();
+        if($depuser){
+            $depuser->delete();
+        }
         return response()->json(['msg' => 'User account deleted successfully!'], 200); 
     }
 }

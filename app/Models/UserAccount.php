@@ -3,13 +3,15 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Tymon\JWTAuth\Contracts\JWTSubject;
+use Dyrynda\Database\Support\CascadeSoftDeletes;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class UserAccount extends Authenticatable implements JWTSubject
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes, CascadeSoftDeletes;
+    protected $cascadeDeletes = ['userinfo', 'posts'];
     public $guarded = [];
 
     protected $hidden = [
@@ -18,7 +20,7 @@ class UserAccount extends Authenticatable implements JWTSubject
     ];
 
     public function userinfo(){
-        return $this->belongsTo(UserInfo::class, 'user_info_id', 'id');
+        return $this->belongsTo(UserInfo::class, 'user_info_id', 'id')->withTrashed();
     }
 
     public function posts(){

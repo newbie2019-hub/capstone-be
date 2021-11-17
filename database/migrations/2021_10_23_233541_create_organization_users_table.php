@@ -16,6 +16,7 @@ class CreateOrganizationUsersTable extends Migration
         Schema::create('organization_users', function (Blueprint $table) {
             $table->foreignId('organization_id')->constrained()->onDelete('cascade');
             $table->foreignId('user_account_id')->constrained()->onDelete('cascade');
+            $table->softDeletes();
             $table->timestamps();
         });
     }
