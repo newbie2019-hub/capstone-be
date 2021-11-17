@@ -36,8 +36,18 @@ class AdminAuthController extends Controller
             }
             else{
                 if (! $token = auth()->guard('api')->attempt(['email' => $request->email, 'password' => $request->password])) {
+
+                    $loggeduser = UserAccount::where('email', $request->email)->first();
+                    activity('User Login')->causedBy($loggeduser->id)->withProperties(['email' => $request->email, 'ip' => request()->ip()])->event('login failed')
+                    ->log('A user attempted to login');
+
                     return response()->json(['error' => 'Unauthorized'], 401);
                 }
+                activity('User Login')->withProperties(['email' => $request->email, 'ip' => request()->ip()])
+                ->causedBy(auth('api')->user()->id)
+                ->event('login success')
+                ->log('A user successfully logged in');
+
                 $type = 'user';
                 $route = 'user/dashboard';
             }
@@ -54,7 +64,6 @@ class AdminAuthController extends Controller
 
     public function logout()
     {
-        auth()->logout();
         return response()->json(['message' => 'User logged out successfully!']);
     }
 
@@ -123,6 +132,7 @@ class AdminAuthController extends Controller
         }
         else {
             $user = UserInfo::where('id', auth()->guard('api')->user()->id)->first();
+            
             return response()->json([
                 'access_token' => $token,
                 'token_type' => 'bearer',

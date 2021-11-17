@@ -28,7 +28,8 @@ class Post extends Model
     {
         return LogOptions::defaults()
         ->logOnly(['id','status', 'created_at', 'user_account_id', 'post_content_id'])
-        ->useLogName('Post');
+        ->useLogName('Post')
+        ->logOnlyDirty();
     }
 
     public function useraccount(){

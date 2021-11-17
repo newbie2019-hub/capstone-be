@@ -27,7 +27,9 @@ class PostContent extends Model
     {
         return LogOptions::defaults()        
         ->logOnly(['id', 'title', 'image', 'post_excerpt', 'content', 'created_at'])
-        ->useLogName('Post Content');
+        ->useLogName('Post Content')
+        ->logOnlyDirty();
+        
     }
 
     public function prunable()
