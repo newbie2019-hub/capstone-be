@@ -20,7 +20,7 @@ class UserAccount extends Authenticatable implements JWTSubject
     ];
 
     public function userinfo(){
-        return $this->belongsTo(UserInfo::class, 'user_info_id', 'id')->withTrashed();
+        return $this->belongsTo(UserInfo::class, 'user_info_id', 'id');
     }
 
     public function posts(){

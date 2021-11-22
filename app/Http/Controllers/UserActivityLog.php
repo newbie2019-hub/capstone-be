@@ -17,7 +17,7 @@ class UserActivityLog extends Controller
     }
 
     public function summary(){
-        return response()->json(Activity::where('causer_id', auth()->user()->id)->with(['user:id,email,type,user_info_id', 'user.userinfo:id,first_name,middle_name,last_name'])->latest()->take(5)->get());
+        return response()->json(Activity::where('causer_id', auth()->user()->id)->with(['user:id,email,type,user_info_id', 'user.userinfo:id,first_name,middle_name,last_name'])->latest()->take(4)->get());
     }
 
     public function search(Request $request){
