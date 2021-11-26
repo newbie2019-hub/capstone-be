@@ -7,6 +7,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 use Dyrynda\Database\Support\CascadeSoftDeletes;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Spatie\Activitylog\Models\Activity;
 
 class UserAccount extends Authenticatable implements JWTSubject
 {
@@ -25,6 +26,10 @@ class UserAccount extends Authenticatable implements JWTSubject
 
     public function posts(){
         return $this->hasMany(Post::class, 'user_account_id', 'id');
+    }
+    
+    public function logs(){
+        return $this->hasMany(Activity::class, 'causer_id', 'id');
     }
     
     public function getJWTIdentifier()
