@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AccountController;
 use App\Http\Controllers\ActivityLog;
+use App\Http\Controllers\AdminActivityLog;
 use App\Http\Controllers\AdminAuthController;
 use App\Http\Controllers\AdminUpdateController;
 use App\Http\Controllers\ArchiveAccounts;
@@ -75,6 +76,8 @@ Route::group(['middleware' => 'api'], function (){
         Route::post('organization/search', [OrganizationController::class, 'searchOrgMembers']);
         Route::apiResource('organization', OrganizationController::class);
         Route::post('search/activity-logs', [ActivityLog::class, 'search']);
+        Route::post('search/accountlogs', [AdminActivityLog::class, 'search']);
+        Route::get('accountlogs', [AdminActivityLog::class, 'index']);
         Route::get('activity-logs', [ActivityLog::class, 'index']);
 
         Route::post('permissions/search', [RolePermissionController::class, 'searchRole']);

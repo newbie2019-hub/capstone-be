@@ -73,7 +73,11 @@ class AdminAuthController extends Controller
 
     public function logout()
     {
-        return response()->json(['message' => 'User logged out successfully!']);
+        activity('Admin Logout')->withProperties(['email' => auth('admin')->user()->email, 'ip' => request()->ip()])
+        ->causedBy(auth('admin')->user()->id)
+        ->event('logout')
+        ->log('Admin has logged out');
+        return response()->json(['message' => 'Admin account has logged out successfully!']);
     }
 
     public function update(Request $request){
