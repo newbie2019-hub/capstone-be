@@ -80,7 +80,9 @@ Route::group(['middleware' => 'api'], function (){
         Route::post('permissions/search', [RolePermissionController::class, 'searchRole']);
         Route::get('permissions/all', [RolePermissionController::class, 'all']);
         Route::apiResource('permissions', RolePermissionController::class);
-        Route::apiResource('post', AdminUpdateController::class);
+        Route::put('posts/restore/{id}', [AdminUpdateController::class, 'restore']);
+        Route::post('posts/search', [AdminUpdateController::class, 'searchPost']);
+        Route::apiResource('posts', AdminUpdateController::class);
         Route::get('summary', [DashboardController::class, 'summary']);
 
         // =SCHOOL OFFICIAL

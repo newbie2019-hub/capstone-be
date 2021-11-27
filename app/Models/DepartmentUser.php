@@ -12,7 +12,7 @@ class DepartmentUser extends Model
     public $guarded = [];
 
     public function user(){
-        return $this->belongsTo(UserAccount::class, 'user_account_id', 'id');
+        return $this->belongsTo(UserAccount::class, 'user_account_id', 'id')->withTrashed();
     }
 
     public function department(){

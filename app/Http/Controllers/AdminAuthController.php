@@ -23,9 +23,18 @@ class AdminAuthController extends Controller
 
         if($isAdmin){
             $type = 'admin';
+            $loggeduser = AdminAccount::where('email', $request->email)->first();
             if (! $token = auth()->guard('admin')->attempt(['email' => $request->email, 'password' => $request->password])) {
+                activity('User Login')->causedBy($loggeduser)->withProperties(['email' => $request->email, 'ip' => request()->ip()])->event('login failed')
+                ->log('User attempted to login');
                 return response()->json(['error' => 'Unauthorized'], 401);
             }
+
+            activity('Admin Login')->withProperties(['email' => $request->email, 'ip' => request()->ip()])
+            ->causedBy($loggeduser)
+            ->event('login success')
+            ->log('Admin successfully logged in');
+
             $route = 'home/dashboard';
         }
         else {

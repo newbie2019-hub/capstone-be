@@ -29,7 +29,7 @@ class UserAccount extends Authenticatable implements JWTSubject
     }
     
     public function logs(){
-        return $this->hasMany(Activity::class, 'causer_id', 'id');
+        return $this->hasMany(Activity::class, 'causer_id', 'id')->latest();
     }
     
     public function getJWTIdentifier()

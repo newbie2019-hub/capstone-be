@@ -18,8 +18,24 @@ class AdminUpdateController extends Controller
 
     public function index()
     {
-        $post = Post::with('postcontent')->where('user_account_id', auth()->user()->id)->paginate(8);
+        $post = Post::withTrashed()->with(['postcontent' => function($query){
+            $query->withTrashed();
+        }, 'useraccount'  => function($query){
+            $query->withTrashed();
+        }, 'useraccount.userinfo'  => function($query){
+            $query->withTrashed();
+        }])->paginate(10);
         return response()->json($post);
+    }
+
+    public function searchPost(Request $request){
+        $posts = Post::whereHas('postcontent',function($query){
+            $query->where('title', 'like', '%'.request()->get('search').'%');
+        })->orWhereHas('useraccount.userinfo', function($query){
+            $query->where('first_name', 'like', '%'.request()->get('search').'%')
+            ->orWhere('last_name', 'like', '%'.request()->get('search').'%');
+        })->with(['postcontent', 'useraccount.userinfo'])->paginate(10);
+        return response()->json($posts);
     }
 
     public function store(Request $request){
@@ -62,6 +78,13 @@ class AdminUpdateController extends Controller
         return response()->json(['success' => 'Post updated successfully']);
     }
 
+    public function restore($id){
+        Post::where('id',$id)->restore();
+        PostContent::where('id', $id)->restore();
+
+        return response()->json(['success' => 'Post restored successfully']);
+    }
+
     public function destroy($id){
         $post = PostContent::findOrFail($id);
         Post::where('post_content_id',$id)->delete();
@@ -69,8 +92,4 @@ class AdminUpdateController extends Controller
         return response()->json(['success' => 'Post deleted successfully']);
     }
 
-    public function searchPost(Request $request){
-        $posts = PostContent::where('title', 'like', '%'.$request->search.'%')->orWhere('content', 'like', '%'.$request->search.'%')->paginate(5);
-        return response()->json($posts);
-    }
 }

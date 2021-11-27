@@ -13,7 +13,7 @@ class ActivityLog extends Controller
     }
 
     public function index(){
-        return response()->json(Activity::with(['subject', 'user'  => function($query){
+        return response()->json(Activity::where('log_name', 'not like', '%Admin%')->with(['subject', 'user'  => function($query){
             $query->withTrashed();
         }, 'user.userinfo'  => function($query){
             $query->withTrashed();

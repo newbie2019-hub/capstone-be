@@ -57,7 +57,7 @@ class PostController extends Controller
             activity('Post Approval')
             ->causedBy(auth('api')->user()->id)
             ->event('approval')
-            ->performedOn($id)
+            ->performedOn($post)
             ->log('Post has been approved');
         }
 

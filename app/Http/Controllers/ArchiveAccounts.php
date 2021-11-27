@@ -28,7 +28,11 @@ class ArchiveAccounts extends Controller
     public function unitAccounts(){
         $depaccount = DepartmentUser::onlyTrashed()->with(['user', 'user.userinfo' => function($query){
             $query->withTrashed();
-        }, 'department', 'user.userinfo.role', 'user.logs', 'user.logs.subject'])->paginate(8);
+        }, 'department', 'user.userinfo.role', 'user.posts'  => function($query){
+            $query->withTrashed();
+        }, 'user.posts.postcontent' => function($query){
+            $query->withTrashed();
+        }, 'user.logs', 'user.logs.subject'])->paginate(8);
         return response()->json($depaccount);
     }
 
@@ -50,11 +54,13 @@ class ArchiveAccounts extends Controller
     public function searchDepartmentAccounts(){
 
         $unitaccount = DepartmentUser::onlyTrashed()->whereHas('user.userinfo', function ($query) {
-            $query->where('first_name', 'like', '%'.request()->get('search').'%')->orWhere('middle_name', 'like', '%'.request()->get('search').'%')
+            $query->withTrashed()->where('first_name', 'like', '%'.request()->get('search').'%')->orWhere('middle_name', 'like', '%'.request()->get('search').'%')
             ->orWhere('last_name',  'like', '%'.request()->get('search').'%');
         })->whereHas('user', function ($query) {
             $query->where('type', 'Department');
-        })->with(['user.userinfo', 'department', 'user.userinfo.role', 'user.logs', 'user.logs.subject'])->paginate(8);
+        })->with(['user.userinfo' => function($query){
+            $query->withTrashed();
+        }, 'department', 'user.userinfo.role', 'user.logs', 'user.logs.subject'])->paginate(8);
         
         return response()->json($unitaccount);
       

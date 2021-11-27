@@ -23,6 +23,10 @@ class AdminAccount extends Authenticatable implements JWTSubject
         return $this->belongsTo(AdminAccountInfo::class, 'admin_account_info_id', 'id');
     }
 
+    public function userinfo(){
+        return $this->belongsTo(AdminAccountInfo::class, 'admin_account_info_id', 'id');
+    }
+
     protected $hidden = [
         'password',
         'remember_token',
