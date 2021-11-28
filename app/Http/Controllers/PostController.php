@@ -122,8 +122,31 @@ class PostController extends Controller
     }
 
     public function searchPost(Request $request){
-        $posts = PostContent::where('title', 'like', '%'.$request->search.'%')->orWhere('content', 'like', '%'.$request->search.'%')->paginate(5);
-        return response()->json($posts);
+        if (Gate::allows('view_all_posts')) {
+            if(auth()->user()->type == 'Department'){
+                $post = Post::whereRelation('useraccount.userinfo', 'first_name', 'like', '%'.$request->search.'%')
+                ->whereRelation('postcontent', 'title', 'like', '%'.$request->search.'%')
+                ->whereHas('useraccount.userinfo.department', function($query){
+                    $query->where('id', auth()->user()->userinfo->department->id);
+                })->with(['postcontent', 'useraccount.userinfo'])->paginate(8);
+                return response()->json($post);
+            }
+            if(auth()->user()->type == 'Organization'){
+                $post = Post::whereRelation('useraccount.userinfo', 'first_name', 'like', '%'.$request->search.'%')
+                ->orWhereRelation('postcontent', 'title', 'like', '%'.$request->search.'%')
+                ->whereHas('useraccount.userinfo.organization', function($query){
+                    $query->where('id', auth()->user()->userinfo->organization->id);
+                })->with(['postcontent', 'useraccount.userinfo'])->paginate(8);
+                return response()->json($post);
+            }
+        }
+        else {
+            $post = Post::whereRelation('postcontent', 'title', 'like', '%'.$request->search.'%')->with(['postcontent', 'useraccount.userinfo'])->where('user_account_id', auth()->user()->id)->paginate(8);
+            return response()->json($post);
+        }
+
+        // $posts = PostContent::where('title', 'like', '%'.$request->search.'%')->orWhere('content', 'like', '%'.$request->search.'%')->paginate(5);
+        // return response()->json($posts);
     }
 
     public function getSchedule(){
