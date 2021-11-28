@@ -48,9 +48,8 @@ class UserDashboardController extends Controller
                 return response()->json(['post' => $post,'faqs' => $faqs, 'org' => $org, 'tel' => $tel]);
             }
             else {
-                $post = Post::whereHas('useraccount.userinfo.organization', function($query){
-                    $query->where('id', auth()->user()->userinfo->organization->id);
-                })->with(['userinfo', 'userinfo.organization', 'userinfo.role'])->count();
+                $post = Post::whereRelation('useraccount.userinfo.organization', 'id', auth()->user()->userinfo->organization->id)
+                ->with(['useraccount.userinfo.organization'])->count();
     
                 $members = OrganizationUser::where('organization_id', auth()->user()->userinfo->organization->id)->count();
             }

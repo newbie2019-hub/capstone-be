@@ -9,6 +9,7 @@ use App\Models\OrganizationUser;
 use App\Models\UnitAccount;
 use App\Models\Post;
 use App\Models\UserAccount;
+use App\Models\UserInfo;
 use Illuminate\Support\Facades\Gate;
 
 class UserMemberController extends Controller
@@ -70,11 +71,44 @@ class UserMemberController extends Controller
             return response()->json(['msg' => 'User has no permission'], 422);
         }
 
-        $member = UserAccount::find($id);
+        $member = UserAccount::where('id', $id)->with(['userinfo'])->first();
 
         if($member){
-            $member->update(['status' => 'Approved']);
-            return response()->json(['msg' => 'Member account approved successfully!'], 200);
+
+           $member->update(['status' => 'Approved']);
+           
+           if($member->userinfo->org_unit_role_id != 8 && $member->userinfo->org_unit_role_id != 11){
+                if($member->type == 'Organization'){
+                    $approvedUser = OrganizationUser::where('user_account_id', $id)->first();
+                } 
+                else {
+                    $approvedUser = DepartmentUser::where('user_account_id', $id)->first();
+                } 
+                
+                // GET ALL ACCOUNTS WITH THE SAME ROLE 
+                // AND THE SAME ORG OR DEP
+                $usersWithSameRole = UserAccount::where('type', $member->type)->whereRelation('userinfo', 'org_unit_role_id', $member->userinfo->org_unit_role_id)
+                ->where('id', '<>', $id)->with(['userinfo'])->get();
+
+                foreach($usersWithSameRole as $user){
+                    if($user->type == 'Organization'){
+                        $orguser = OrganizationUser::where('user_account_id', $user->id)->first();
+                        if($orguser->organization_id == $approvedUser->organization_id) {
+                            $orguser->user->delete();
+                            OrganizationUser::where('user_account_id', $user->id)->delete();
+                        }
+                    }
+                    else {
+                        $depuser = DepartmentUser::where('user_account_id', $user->id)->first();
+                        if($depuser->department_id == $approvedUser->department_id) {
+                            $depuser->user->delete();
+                            DepartmentUser::where('user_account_id', $user->id)->delete();
+                        }
+                    }
+                }
+            }
+        
+           return response()->json(['msg' => 'Member account approved successfully!'], 200);
         }
         else {
             return response()->json(['msg' => 'Member account not found'], 422);

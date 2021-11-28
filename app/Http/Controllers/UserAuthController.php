@@ -53,11 +53,15 @@ class UserAuthController extends Controller
            $orgUserExist = OrganizationUser::whereHas('user.userinfo', function($query){
             $query->where('org_unit_role_id', request()->get('role_id'));
            })->where('organization_id', $request->organization_id)
-           ->with(['user.userinfo'])->first();
+           ->with(['user.userinfo'])->get();
 
-           if($orgUserExist){
-               if($orgUserExist->user->userinfo->org_unit_role_id != 8){
-                   return response()->json(['msg' => ['Error! Selected position on the organization already exist']], 422);
+           foreach($orgUserExist as $orgUser){
+               if($orgUser){
+                   if($orgUser->user->status == 'Approved'){
+                       if($orgUser->user->userinfo->org_unit_role_id != 8){
+                           return response()->json(['msg' => ['Error! Selected position on the organization already exist']], 422);
+                       }
+                   }
                }
            }
            
@@ -66,12 +70,16 @@ class UserAuthController extends Controller
            $depUserExist = DepartmentUser::whereHas('user.userinfo', function($query){
             $query->where('org_unit_role_id', request()->get('role_id'));
            })->where('department_id', $request->unit_id)
-           ->with(['user.userinfo'])->first();
+           ->with(['user.userinfo'])->get();
 
-           if($depUserExist){
-             if($depUserExist->user->userinfo->org_unit_role_id != 12){
-                return response()->json(['msg' => ['Error! Selected position on the department already exist']], 422);
-             }    
+           foreach($depUserExist as $depUser){
+                if($depUser){
+                    if($depUser->user->status == 'Approved'){
+                        if($depUser->user->userinfo->org_unit_role_id != 11){
+                            return response()->json(['msg' => ['Error! Selected position on the department already exist']], 422);
+                        }    
+                    }    
+                }
            }
            
         }

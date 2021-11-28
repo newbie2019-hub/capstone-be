@@ -72,6 +72,9 @@ class AccountController extends Controller
             $orgaccount = OrganizationUser::whereHas('user.userinfo', function ($query) {
                 $query->where('first_name', 'like', '%'.request()->get('search').'%')->orWhere('middle_name', 'like', '%'.request()->get('search').'%')
                 ->orWhere('last_name',  'like', '%'.request()->get('search').'%');
+            })->orWhereHas('organization', function($query){
+                $query->where('name', 'like', '%'.request()->get('search').'%')
+                ->orWhere('abbreviation', 'like', '%'.request()->get('search').'%');
             })->whereHas('user', function ($query) {
                 $query->where('type', 'Organization');
             })->with(['user', 'user.userinfo', 'organization', 'user.userinfo.role'])->paginate(8);
@@ -82,8 +85,10 @@ class AccountController extends Controller
             $orgaccount = OrganizationUser::whereHas('user', function ($query) {
                 $query->where('status', request()->get('status'));
                 $query->where('type', 'Organization');
-            })
-            ->whereHas('user.userinfo', function ($query) {
+            })->orWhereHas('organization', function($query){
+                $query->where('name', 'like', '%'.request()->get('search').'%')
+                ->orWhere('abbreviation', 'like', '%'.request()->get('search').'%');
+            })->whereHas('user.userinfo', function ($query) {
                 $query->where('first_name', 'like', '%'.request()->get('search').'%')->orWhere('middle_name', 'like', '%'.request()->get('search').'%')
                 ->orWhere('last_name',  'like', '%'.request()->get('search').'%');
             })->with(['user', 'user.userinfo', 'organization', 'user.userinfo.role'])->paginate(8);
@@ -97,6 +102,9 @@ class AccountController extends Controller
             $unitaccount = DepartmentUser::whereHas('user.userinfo', function ($query) {
                 $query->where('first_name', 'like', '%'.request()->get('search').'%')->orWhere('middle_name', 'like', '%'.request()->get('search').'%')
                 ->orWhere('last_name',  'like', '%'.request()->get('search').'%');
+            })->orWhereHas('department', function($query){
+                $query->where('name', 'like', '%'.request()->get('search').'%')
+                ->orWhere('abbreviation', 'like', '%'.request()->get('search').'%');
             })->whereHas('user', function ($query) {
                 $query->where('type', 'Department');
             })->with(['user.userinfo', 'department', 'user.userinfo.role'])->paginate(8);
@@ -107,8 +115,10 @@ class AccountController extends Controller
             $unitaccount = DepartmentUser::whereHas('user', function ($query) {
                 $query->where('status', request()->get('status'));
                 $query->where('type', 'Department');
-            })
-            ->whereHas('user.userinfo', function ($query) {
+            })->orWhereHas('department', function($query){
+                $query->where('name', 'like', '%'.request()->get('search').'%')
+                ->orWhere('abbreviation', 'like', '%'.request()->get('search').'%');
+            })->whereHas('user.userinfo', function ($query) {
                 $query->where('first_name', 'like', '%'.request()->get('search').'%')->orWhere('middle_name', 'like', '%'.request()->get('search').'%')
                 ->orWhere('last_name',  'like', '%'.request()->get('search').'%');
             })->with(['user.userinfo', 'department', 'user.userinfo.role'])->paginate(8);
@@ -134,6 +144,38 @@ class AccountController extends Controller
 
         if($user) {
             $user->update(['status' => 'Approved']);
+            //IF user role is not representative or faculty member then delete others with the same role
+            if($user->userinfo->org_unit_role_id != 8 && $user->userinfo->org_unit_role_id != 11){
+                if($user->type == 'Organization'){
+                    $approvedUser = OrganizationUser::where('user_account_id', $id)->first();
+                } 
+                else {
+                    $approvedUser = DepartmentUser::where('user_account_id', $id)->first();
+                } 
+                   
+                // GET ALL ACCOUNTS WITH THE SAME ROLE 
+                // AND THE SAME ORG OR DEP
+                $usersWithSameRole = UserAccount::where('type', $user->type)->whereRelation('userinfo', 'org_unit_role_id', $user->userinfo->org_unit_role_id)
+                ->where('id', '<>', $id)->with(['userinfo'])->get();
+    
+                foreach($usersWithSameRole as $user){
+                    if($user->type == 'Organization'){
+                        $orguser = OrganizationUser::where('user_account_id', $user->id)->first();
+                        if($orguser->organization_id == $approvedUser->organization_id) {
+                            $orguser->user->delete();
+                            OrganizationUser::where('user_account_id', $user->id)->delete();
+                        }
+                    }
+                    else {
+                        $depuser = DepartmentUser::where('user_account_id', $user->id)->first();
+                        if($depuser->department_id == $approvedUser->department_id) {
+                            $depuser->user->delete();
+                            $depuser = DepartmentUser::where('user_account_id', $user->id)->delete();
+                        }
+                    }
+                }
+            }
+           
             Mail::to($user->email)->send(new ApprovedAccountMail($data));
             
             return response()->json(['msg' => 'Account has been approved'], 200);
@@ -167,12 +209,12 @@ class AccountController extends Controller
         $info['email'] = $request->email;
 
         if($request->account_type == 'Organization'){
-            OrganizationUser::where('user_account_id', $id)->delete();
+            OrganizationUser::where('user_account_id', $id)->forceDelete();
             OrganizationUser::create(['user_account_id' => $id, 'organization_id' => $request->org_unit_id]);
         }
 
         if($request->account_type == 'Department'){
-            DepartmentUser::where('user_account_id', $id)->delete();
+            DepartmentUser::where('user_account_id', $id)->forceDelete();
             DepartmentUser::create(['user_account_id' => $id, 'department_id' => $request->org_unit_id]);
         }
         
