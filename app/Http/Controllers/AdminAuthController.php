@@ -161,6 +161,7 @@ class AdminAuthController extends Controller
 
     public function restore($id){
         $acc = UserAccount::where('id', $id)->first();
+        return response()->json($acc);
         if($acc->type == 'Organization'){
             OrganizationUser::where('user_account_id', $id)->restore();
         }
