@@ -176,7 +176,7 @@ class AccountController extends Controller
                 }
             }
            
-            Mail::to($user->email)->send(new ApprovedAccountMail($data));
+            // Mail::to($user->email)->send(new ApprovedAccountMail($data));
             
             return response()->json(['msg' => 'Account has been approved'], 200);
         }
