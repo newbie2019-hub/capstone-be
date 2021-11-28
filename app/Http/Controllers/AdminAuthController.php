@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\AdminAccount;
 use App\Models\AdminAccountInfo;
+use App\Models\DepartmentUser;
+use App\Models\OrganizationUser;
 use App\Models\UserAccount;
 use App\Models\UserInfo;
 use Illuminate\Http\Request;
@@ -155,5 +157,19 @@ class AdminAuthController extends Controller
                 'user_account' => auth('api')->user(),
             ]);
         }
+    }
+
+    public function restore($id){
+        $acc = UserAccount::where('id', $id)->first();
+        if($acc->type == 'Organization'){
+            OrganizationUser::where('user_account_id', $id)->restore();
+        }
+        else {
+            DepartmentUser::where('user_account_id', $id)->restore();
+        }
+        UserAccount::where('id',$id)->restore();
+        UserInfo::where('id', $id)->restore();
+
+        return response()->json(['success' => 'Account restored successfully']);
     }
 }

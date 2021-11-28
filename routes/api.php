@@ -45,6 +45,7 @@ Route::group(['middleware' => 'api', 'prefix' => 'auth'], function () {
         Route::post('login', [AdminAuthController::class, 'login']);
         Route::post('logout', [AdminAuthController::class, 'logout']);
         Route::post('update', [AdminAuthController::class, 'update']);
+        Route::put('restore/{id}', [AdminAuthController::class, 'restore']);
         Route::post('userUpdate/{id}', [AccountController::class, 'update']);
         Route::post('change_password', [AdminAuthController::class, 'changePassword']);
         Route::post('me', [AdminAuthController::class, 'me']);

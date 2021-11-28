@@ -20,7 +20,9 @@ class ArchiveAccounts extends Controller
             $query->withTrashed();
         }, 'user.posts.postcontent' => function($query){
             $query->withTrashed();
-        }, 'user.logs', 'user.logs.subject'])->paginate(8);
+        }, 'user.logs' => function($query){
+            $query->where('log_name', 'not like', '%Admin%');
+        }, 'user.logs.subject'])->paginate(8);
 
         return response()->json($orgaccount);
     }
@@ -32,7 +34,9 @@ class ArchiveAccounts extends Controller
             $query->withTrashed();
         }, 'user.posts.postcontent' => function($query){
             $query->withTrashed();
-        }, 'user.logs', 'user.logs.subject'])->paginate(8);
+        }, 'user.logs' => function($query){
+            $query->where('log_name', 'not like', '%Admin%');
+        }, 'user.logs.subject'])->paginate(8);
         return response()->json($depaccount);
     }
 
@@ -45,7 +49,9 @@ class ArchiveAccounts extends Controller
             $query->where('type', 'Organization');
         })->with(['user', 'user.userinfo' => function($query){
             $query->withTrashed();
-        }, 'organization', 'user.userinfo.role', 'user.logs', 'user.logs.subject'])->paginate(8);
+        }, 'organization', 'user.userinfo.role', 'user.logs' => function($query){
+            $query->where('log_name', 'not like', '%Admin%');
+        }, 'user.logs.subject'])->paginate(8);
         
         return response()->json($orgaccount);
 
@@ -60,12 +66,12 @@ class ArchiveAccounts extends Controller
             $query->where('type', 'Department');
         })->with(['user.userinfo' => function($query){
             $query->withTrashed();
-        }, 'department', 'user.userinfo.role', 'user.logs', 'user.logs.subject'])->paginate(8);
+        }, 'department', 'user.userinfo.role', 'user.logs' => function($query){
+            $query->where('log_name', 'not like', '%Admin%');
+        }, 'user.logs.subject'])->paginate(8);
         
         return response()->json($unitaccount);
       
     }
-
-
 
 }

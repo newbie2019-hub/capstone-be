@@ -30,7 +30,7 @@ class UserAccountRequest extends FormRequest
             'last_name' => 'bail|required|max:50',
             'contact_number' => 'bail|required|max:30',
             'gender' => 'bail|required|max:15',
-            'email' => 'required|email|unique:user_accounts,email',
+            'email' => 'required|email',
         ];
     }
 
