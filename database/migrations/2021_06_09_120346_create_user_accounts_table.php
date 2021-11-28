@@ -16,7 +16,7 @@ class CreateUserAccountsTable extends Migration
         Schema::create('user_accounts', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_info_id')->constrained()->onDelete('cascade');
-            $table->string('email')->unique();
+            $table->string('email');
             $table->string('password');
             $table->string('type');
             $table->string('status')->default('Pending');

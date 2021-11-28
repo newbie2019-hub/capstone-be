@@ -57,7 +57,7 @@ class UserAuthController extends Controller
 
            if($orgUserExist){
                if($orgUserExist->user->userinfo->org_unit_role_id != 8){
-                   return response()->json(['msg' => 'Error! User with the selected position on the organization already exist'], 422);
+                   return response()->json(['msg' => ['Error! Selected position on the organization already exist']], 422);
                }
            }
            
@@ -70,7 +70,7 @@ class UserAuthController extends Controller
 
            if($depUserExist){
              if($depUserExist->user->userinfo->org_unit_role_id != 12){
-                return response()->json(['msg' => 'Error! User with the selected position on the department already exist'], 422);
+                return response()->json(['msg' => ['Error! Selected position on the department already exist']], 422);
              }    
            }
            
