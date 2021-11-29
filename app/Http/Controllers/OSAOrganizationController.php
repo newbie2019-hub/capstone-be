@@ -13,7 +13,7 @@ class OSAOrganizationController extends Controller
     }
 
     public function index(){
-        $accounts = Organization::with(['members', 'members.userinfo', 'members.userinfo.role', 'members.posts', 'members.posts.postcontent'])->paginate(8);
+        $accounts = Organization::with(['members', 'members.userinfo', 'members.userinfo.role', 'members.posts', 'members.posts.postcontent'])->get();
         return response()->json($accounts);
     }
 }
