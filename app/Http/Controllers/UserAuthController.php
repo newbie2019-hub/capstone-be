@@ -121,10 +121,7 @@ class UserAuthController extends Controller
             ]);
         } 
 
-
-        if($request->emailNotif){
-            Mail::to($useraccount->email)->send(new NewAccountMail($request->all()));
-        }
+        Mail::to($useraccount->email)->send(new NewAccountMail($request));
 
         return response()->json(['msg' => 'Account created successfully!'], 200);
   

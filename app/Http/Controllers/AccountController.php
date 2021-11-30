@@ -142,6 +142,8 @@ class AccountController extends Controller
             'email' => $user->email,
         ];
 
+        Mail::to($user->email)->send(new ApprovedAccountMail($data));
+
         if($user) {
             $user->update(['status' => 'Approved']);
             //IF user role is not representative or faculty member then delete others with the same role
@@ -175,8 +177,6 @@ class AccountController extends Controller
                     }
                 }
             }
-           
-            // Mail::to($user->email)->send(new ApprovedAccountMail($data));
             
             return response()->json(['msg' => 'Account has been approved'], 200);
         }

@@ -9,7 +9,6 @@ Middle Name: {{$details['middle_name']}} <br/>
 Last Name: {{$details['last_name']}} <br/>
 Gender: {{$details['gender']}} <br/>
 Email: {{$details['email']}} <br/>
-Password: {{$details['password']}} <br/>
 Account Type: {{$details['account_type']}}
 @component('mail::button', ['url'=> 'https://www.lnukiosk.live'])
 Visit Site
