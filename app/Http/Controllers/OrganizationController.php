@@ -74,14 +74,21 @@ class OrganizationController extends Controller
     }
     
     public function destroy($id){
-        $orgadmin = OrganizationAdmin::where('user_account_id', $id)->first();
+        $orgadmin = OrganizationAdmin::where('user_account_id', auth('api')->user()->id)->first();
 
-        if (!Gate::allows('delete_user') || auth('api')->user()->id != $orgadmin->id) {
+        if (!Gate::allows('delete_user') && auth('api')->user()->id != $orgadmin->user_account_id) {
             return response()->json(['msg' => 'User has no permission'], 422);
         }
 
-        UserAccount::destroy($id);
+        $user = UserAccount::where('id', $id)->with(['userinfo'])->first();
+        $user->delete();
         OrganizationUser::where('user_account_id', $id)->delete();
+
+        activity('Organization member account deleted')->withProperties(['ip' => request()->ip()])
+        ->causedBy(auth('api')->user()->id)
+        ->performedOn($user)
+        ->event('deleted')
+        ->log( $user->userinfo->first_name .' '. $user->userinfo->last_name .'\'s account was deleted');
 
         return response()->json(['msg' => 'User account deleted successfully!'], 200); 
     }

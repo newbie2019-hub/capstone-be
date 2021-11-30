@@ -107,8 +107,14 @@ class UserMemberController extends Controller
                     }
                 }
             }
+
+            activity('Account approval')->withProperties(['ip' => request()->ip()])
+            ->causedBy(auth('api')->user())
+            ->performedOn($member)
+            ->event('approval')
+            ->log( $member->userinfo->first_name .' '. $member->userinfo->last_name .'\'s account was approved');
         
-           return response()->json(['msg' => 'Member account approved successfully!'], 200);
+            return response()->json(['msg' => 'Member account approved successfully!'], 200);
         }
         else {
             return response()->json(['msg' => 'Member account not found'], 422);
@@ -120,6 +126,13 @@ class UserMemberController extends Controller
 
         if($member){
             $member->update(['status' => 'Approved']);
+
+            activity('Organization account approval')->withProperties(['ip' => request()->ip()])
+            ->causedBy(auth('api')->user())
+            ->performedOn($member)
+            ->event('approval')
+            ->log( $member->userinfo->first_name .' '. $member->userinfo->last_name .'\'s account was approved');
+
             return response()->json(['msg' => 'Member account approved successfully!'], 200);
         }
         else {
