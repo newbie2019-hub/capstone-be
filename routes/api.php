@@ -153,7 +153,6 @@ Route::group(['middleware' => 'api'], function (){
 
         Route::get('rates', [RateController::class, 'index']);
         
-
         //FAQS
         Route::get('faqs', [FaqController::class, 'faqs']);
         Route::post('faqs', [FaqController::class, 'storeFaqs']);
