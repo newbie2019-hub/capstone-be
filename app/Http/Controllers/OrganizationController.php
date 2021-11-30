@@ -74,7 +74,9 @@ class OrganizationController extends Controller
     }
     
     public function destroy($id){
-        if (!Gate::allows('delete_user')) {
+        $orgadmin = OrganizationAdmin::where('user_account_id', $id)->first();
+
+        if (!Gate::allows('delete_user') || auth('api')->user()->id != $orgadmin->id) {
             return response()->json(['msg' => 'User has no permission'], 422);
         }
 
