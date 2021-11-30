@@ -14,6 +14,7 @@ use App\Models\Goal;
 use App\Models\Objective;
 use App\Models\CourseObjective;
 use Illuminate\Http\Request;
+use Spatie\Activitylog\Models\Activity;
 
 class UniversityInfoController extends Controller
 {
@@ -90,31 +91,83 @@ class UniversityInfoController extends Controller
     }
 
     public function telephoneDirectories(){
-        $tel = TelephoneDirectory::paginate(5);
+        $tel = TelephoneDirectory::paginate(10);
         return response()->json($tel);
     }
 
     public function searchTelephoneDirectory(Request $request){
-        $tel = TelephoneDirectory::where('name', 'like', '%'.$request->search.'%')->paginate(5);
+        $tel = TelephoneDirectory::where('name', 'like', '%'.$request->search.'%')->paginate(10);
         return response()->json($tel);
     }
 
     public function storeTelephone(Request $request){
-        $tel = TelephoneDirectory::create([
-            'name' => $request->name,
-            'tel_num' => $request->tel_num
-        ]);
+        if(auth('admin')->user()){
+
+            activity()->disableLogging();
+
+            $tel = TelephoneDirectory::create([
+                'name' => $request->name,
+                'tel_num' => $request->tel_num
+            ]);
+            
+            activity()->enableLogging();
+
+            activity('Admin - Telephone Directory Created')->withProperties($tel)
+            ->causedBy(auth('admin')->user())
+            ->performedOn($tel)
+            ->event('created')
+            ->log('You added a telephone directory record');
+            
+        }
+        else {
+            $tel = TelephoneDirectory::create([
+                'name' => $request->name,
+                'tel_num' => $request->tel_num
+            ]);
+        }
+
         return response()->json($tel);
     }
 
     public function updateTelephone(Request $request, $id){
-        $tel = TelephoneDirectory::where('id', $id)->first();
-        $tel->update(['name' => $request->name, 'tel_num' => $request->tel_num]);
+        if(auth('admin')->user()){
+            $tel = TelephoneDirectory::where('id', $id)->first();
+            activity()->disableLogging();
+            $tel->update(['name' => $request->name, 'tel_num' => $request->tel_num]);
+            
+            activity()->enableLogging();
+            
+            activity('Admin - Telephone Directory Delete')->withProperties($tel)
+            ->causedBy(auth('admin')->user())
+            ->performedOn($tel)
+            ->event('updated')
+            ->log('You updated a telephone directory record');
+        }
+        else {
+            $tel = TelephoneDirectory::where('id', $id)->first();
+            $tel->update(['name' => $request->name, 'tel_num' => $request->tel_num]);
+        }
+
         return response()->json(['success' => 'Telephone updated successfully']);
     }
 
     public function deleteTelephone($id){
-        TelephoneDirectory::destroy($id);
+        if(auth('admin')->user()){
+            $telDirectory = TelephoneDirectory::where('id', $id)->first();
+            $telDirectory->disableLogging();
+            
+            activity('Admin - Telephone Directory Delete')->withProperties($telDirectory)
+            ->causedBy(auth('admin')->user())
+            ->performedOn($telDirectory)
+            ->event('deleted')
+            ->log('You deleted a telephone directory record');
+            
+            $telDirectory->delete();
+        }
+        else {
+            TelephoneDirectory::destroy($id);
+        }
+
         return response()->json(['success' => 'Telephone deleted successfully']);
     }
 
