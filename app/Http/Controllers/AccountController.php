@@ -226,16 +226,27 @@ class AccountController extends Controller
     }
 
     public function destroy($id){
+        $acc = UserAccount::with(['userinfo'])->where('id', $id)->first();
+
         UserAccount::destroy($id);
         $orguser = OrganizationUser::where('user_account_id', $id)->first();
+
         if($orguser){
             OrganizationUser::where('user_account_id', $id)->delete();
         }
         
         $depuser = DepartmentUser::where('user_account_id', $id)->first();
+
         if($depuser){
             DepartmentUser::where('user_account_id', $id)->delete();
         }
+
+        activity('Admin - Account Deletion')->withProperties(['ip' => request()->ip()])
+        ->causedBy(auth('admin')->user()->id)
+        ->performedOn($acc)
+        ->event('account deletion')
+        ->log( $acc->userinfo->first_name .' '. $acc->userinfo->last_name .'\'s account was deleted by the administrator');
+
         return response()->json(['msg' => 'User account deleted successfully!'], 200); 
     }
 

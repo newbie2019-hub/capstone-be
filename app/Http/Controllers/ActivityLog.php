@@ -17,19 +17,7 @@ class ActivityLog extends Controller
             $query->withTrashed();
         }, 'user.userinfo'  => function($query){
             $query->withTrashed();
-        }])->latest()->paginate(10));
-    }
-
-    public function search(Request $request){
-        $activity = Activity::where('log_name', 'like', '%'.$request->search.'%')
-        ->orWhere('event', 'like', '%'.$request->search.'%')
-        ->with(['subject', 'user'  => function($query){
-            $query->withTrashed();
-        }, 'user.userinfo' => function($query){
-            $query->withTrashed();
-        }])->latest()->paginate(10);
-
-        return response()->json($activity);
+        }])->latest()->get());
     }
     
 }

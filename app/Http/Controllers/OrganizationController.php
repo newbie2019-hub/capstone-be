@@ -79,6 +79,8 @@ class OrganizationController extends Controller
         }
 
         UserAccount::destroy($id);
+        OrganizationUser::where('user_account_id', $id)->delete();
+
         return response()->json(['msg' => 'User account deleted successfully!'], 200); 
     }
 

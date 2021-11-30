@@ -180,12 +180,7 @@ Route::group(['middleware' => 'api'], function (){
         Route::post('new_course', [UniversityInfoController::class, 'storeCourse']);
         Route::put('course/{id}', [UniversityInfoController::class, 'updateCourse']);
         Route::delete('course/destroy/{id}', [UniversityInfoController::class, 'deleteCourse']);
-        
-        //TO-DO REMOVE FUNCTIONS ON CONTROLLERS
-        // Route::get('courseobjective', [UniversityInfoController::class, 'courseObjectives']);
-        // Route::post('search/courseobjective', [UniversityInfoController::class, 'searchCourseObjective']);
-        // Route::post('new_course_objective', [UniversityInfoController::class, 'storeCourseObjective']);
-        // Route::put('courseobjective/{id}', [UniversityInfoController::class, 'updateCourseObjective']);
+
         Route::delete('courseobjective/destroy/{id}', [UniversityInfoController::class, 'deleteCourseObjective']);
 
         Route::get('goal', [UniversityInfoController::class, 'goals']);

@@ -47,8 +47,8 @@ class AdminAuthController extends Controller
             }
             else{
                 if (! $token = auth()->guard('api')->attempt(['email' => $request->email, 'password' => $request->password])) {
-
                     $loggeduser = UserAccount::where('email', $request->email)->first();
+
                     activity('User Login')->causedBy($loggeduser->id)->withProperties(['email' => $request->email, 'ip' => request()->ip()])->event('login failed')
                     ->log('User attempted to login');
 
@@ -160,7 +160,9 @@ class AdminAuthController extends Controller
     }
 
     public function restore($id){
-        $acc = UserAccount::onlyTrashed()->where('id', $id)->first();
+        $acc = UserAccount::onlyTrashed()->with(['userinfo' => function($query){
+            $query->withTrashed();
+        }])->where('id', $id)->first();
         // return response()->json($acc);
         if($acc->type == 'Organization'){
             OrganizationUser::where('user_account_id', $id)->restore();
@@ -170,6 +172,12 @@ class AdminAuthController extends Controller
         }
         UserAccount::where('id',$id)->restore();
         UserInfo::where('id', $id)->restore();
+
+        activity('Admin - Account Restoration')->withProperties(['email' => auth('admin')->user()->email, 'ip' => request()->ip()])
+        ->causedBy(auth('admin')->user()->id)
+        ->performedOn($acc)
+        ->event('account restored')
+        ->log( $acc->userinfo->first_name .' '. $acc->userinfo->last_name .'\'s account was restored by the administrator');
 
         return response()->json(['success' => 'Account restored successfully']);
     }

@@ -13,7 +13,7 @@ class UserActivityLog extends Controller
     }
 
     public function index(){
-        return response()->json(Activity::where('causer_id', auth()->user()->id)->with(['user:id,email,type,user_info_id', 'user.userinfo:id,first_name,middle_name,last_name'])->latest()->paginate(10));
+        return response()->json(Activity::where('log_name', 'not like', '%Admin%')->where('causer_id', auth()->user()->id)->with(['user:id,email,type,user_info_id', 'user.userinfo:id,first_name,middle_name,last_name'])->latest()->paginate(10));
     }
 
     public function summary(){
