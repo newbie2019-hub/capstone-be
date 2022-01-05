@@ -99,6 +99,8 @@ Route::group(['middleware' => 'api'], function (){
         Route::get('university_info', [UniversityInfoController::class, 'universityinfo']);
         Route::get('corevalues', [UniversityInfoController::class, 'corevalues']);
         Route::put('mission/{id}', [UniversityInfoController::class, 'updateMission']);
+        Route::put('history/{id}', [UniversityInfoController::class, 'updateHistory']);
+        Route::put('qualitypolicy/{id}', [UniversityInfoController::class, 'updateQualityPolicy']);
         Route::put('vision/{id}', [UniversityInfoController::class, 'updateVision']);
         Route::put('corevalues/{id}', [UniversityInfoController::class, 'updateCV']);
 

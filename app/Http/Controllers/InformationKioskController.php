@@ -19,7 +19,7 @@ use Illuminate\Http\Request;
 class InformationKioskController extends Controller
 {
     public function missionvision(){
-        return response()->json(UniversityInfo::get(['lnu_hymn', 'lnu_mission', 'lnu_vision']));
+        return response()->json(UniversityInfo::get(['lnu_hymn', 'lnu_mission', 'lnu_vision', 'lnu_history', 'lnu_qualitypolicy']));
     }
 
     public function organizations(){

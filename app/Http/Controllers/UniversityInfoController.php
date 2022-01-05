@@ -78,6 +78,18 @@ class UniversityInfoController extends Controller
         return response()->json($mission);
     }
 
+    public function updateHistory(Request $request, $id){
+        $history = UniversityInfo::where('id', $id)->first();
+        $history->update(['lnu_history' => $request->history]);
+        return response()->json($history);
+    }
+
+    public function updateQualityPolicy(Request $request, $id){
+        $qualitypolicy = UniversityInfo::where('id', $id)->first();
+        $qualitypolicy->update(['lnu_qualitypolicy' => $request->qualitypolicy]);
+        return response()->json(['msg' => 'Quality Policy updated successfully']);
+    }
+
     public function updateVision(Request $request, $id){
         $vision = UniversityInfo::where('id', $id)->first();
         $vision->update(['lnu_vision' => $request->lnu_vision]);

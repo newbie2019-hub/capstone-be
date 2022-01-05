@@ -29,7 +29,7 @@ class AdminUpdateController extends Controller
     }
 
     public function searchPost(Request $request){
-        $posts = Post::whereHas('postcontent',function($query){
+        $posts = Post::withTrashed()->whereHas('postcontent',function($query){
             $query->where('title', 'like', '%'.request()->get('search').'%');
         })->orWhereHas('useraccount.userinfo', function($query){
             $query->where('first_name', 'like', '%'.request()->get('search').'%')

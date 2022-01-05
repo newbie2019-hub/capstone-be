@@ -18,6 +18,8 @@ class CreateUniversityInfosTable extends Migration
             $table->longText('lnu_mission');
             $table->longText('lnu_vision');
             $table->longText('lnu_hymn');
+            $table->longText('lnu_qualitypolicy');
+            $table->longText('lnu_history');
             $table->timestamps();
         });
     }
