@@ -80,7 +80,7 @@ class PostController extends Controller
             'user_account_id' => auth()->guard('api')->user()->id
         ];
 
-        if(auth()->user()->userinfo->role->role == 'President' || auth()->user()->userinfo->role->role == 'Unit Chair' || auth()->user()->userinfo->role->role == 'OSA'){
+        if(auth()->user()->userinfo->role->role == 'President' || auth()->user()->userinfo->role->role == 'Unit Chair' || auth()->user()->userinfo->role->role == 'OSA' || auth()->user()->userinfo->role->role == 'University Admin'){
             $post['status'] = 'Approved';
         }
 
