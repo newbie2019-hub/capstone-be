@@ -84,5 +84,13 @@ class PermissionRoleSeeder extends Seeder
                 'permission_id' => $osa_permission[$osa]
             ]);
         }
+
+        $university_permission = [1,3,8,11,12,18,19,21, 22, 23, 24, 25, 26];
+        for($uni = 0; $uni < count($university_permission); $uni++){
+            PermissionRole::create([
+                'org_unit_role_id' => 13,
+                'permission_id' => $university_permission[$uni]
+            ]);
+        }
     }
 }

@@ -244,6 +244,24 @@ class UserAccountSeeder extends Seeder
             'type' => 'Organization'
         ]);
 
+        /** USER 12 - UNIVERSITY ADMIN */
+        $uniadmin = UserInfo::create([
+            'first_name' => 'John',
+            'middle_name' => '',
+            'last_name' => 'Doe',
+            'gender' => 'Male',
+            'contact_number' => '09123456790',
+            'org_unit_role_id' => 13,
+        ]);
+
+        $uniadmin = UserAccount::create([
+            'user_info_id' => $uniadmin->id,
+            'email' => 'lnuadmin@edu.ph',
+            'password' => Hash::make('123123'),
+            'status' => 'Approved',
+            'type' => 'Department'
+        ]);
+
      
     }
 }

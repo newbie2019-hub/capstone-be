@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Department;
 use App\Models\DepartmentUser;
 use App\Models\Faqs;
 use App\Models\Organization;
@@ -56,14 +57,25 @@ class UserDashboardController extends Controller
         }
         
         if(auth()->user()->type == 'Department'){
-            $post = Post::whereHas('useraccount.userinfo.department', function($query){
-                $query->where('id', auth()->user()->userinfo->department->id);
-            })->with(['userinfo', 'userinfo.department', 'userinfo.role'])->count();
+            if(auth()->user()->userinfo->role['role'] == 'University Admin'){
+                $org = Organization::count();
+                $dep = Department::count();
+                $faqs = Faqs::count();
+                $tel = TelephoneDirectory::count();
+                $post = Post::whereHas('useraccount', function($query){
+                    $query->where('type', 'Organization');
+                })->count();
 
-            $members = DepartmentUser::where('department_id', auth()->user()->userinfo->department->id)->count();
+                return response()->json(['post' => $post,'faqs' => $faqs, 'dep' => $dep, 'org' => $org, 'tel' => $tel]);
+            }
+            else {
+                $post = Post::whereHas('useraccount.userinfo.department', function($query){
+                    $query->where('id', auth()->user()->userinfo->department->id);
+                })->with(['userinfo', 'userinfo.department', 'userinfo.role'])->count();
+    
+                $members = DepartmentUser::where('department_id', auth()->user()->userinfo->department->id)->count();
+            }
         }
-
-        $faqs = Faqs::count();
 
         return response()->json(['post' => $post, 'members' => $members]);
     }

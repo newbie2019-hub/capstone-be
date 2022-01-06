@@ -17,15 +17,15 @@ class AdminAccountSeeder extends Seeder
     public function run()
     {
         $account_info = AdminAccountInfo::create([
-            'first_name' => 'Yvan',
-            'middle_name' => 'Caindoy',
-            'last_name' => 'Sabay',
+            'first_name' => 'LNU',
+            'middle_name' => '',
+            'last_name' => 'MIS',
             'gender' => 'Male',
-            'contact_number' => '09355310166',
+            'contact_number' => '09123456789',
         ]);
 
         AdminAccount::create([
-            'email' => 'sabayyvan2018@gmail.com',
+            'email' => 'lnumis@edu.ph',
             'password' => Hash::make('123123'),
             'admin_account_info_id' => $account_info->id
         ]);
