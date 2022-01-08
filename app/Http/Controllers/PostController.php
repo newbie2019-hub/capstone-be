@@ -5,7 +5,9 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\UserInfo;
 use App\Models\Post;
+use App\Models\PostAsImage;
 use App\Models\PostContent;
+use App\Models\PostImage;
 use App\Models\TaskSchedule;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Str;
@@ -26,7 +28,7 @@ class PostController extends Controller
         return response()->json($post);
     }
 
-    public function posts()
+    public function allposts()
     {
         if (Gate::allows('view_all_posts')) {
             if(auth()->user()->type == 'Department'){
@@ -43,9 +45,31 @@ class PostController extends Controller
             }
         }
         else {
+            return response()->json(['msg' => 'You don\'t have enough permission to view this post'], 422);
+        }
+
+    }
+
+    public function posts()
+    {
+        // if (Gate::allows('view_all_posts')) {
+        //     if(auth()->user()->type == 'Department'){
+        //         $post = Post::whereHas('useraccount.userinfo.department', function($query){
+        //             $query->where('id', auth()->user()->userinfo->department->id);
+        //         })->with(['postcontent', 'useraccount.userinfo'])->paginate(8);
+        //         return response()->json($post);
+        //     }
+        //     if(auth()->user()->type == 'Organization'){
+        //         $post = Post::whereHas('useraccount.userinfo.organization', function($query){
+        //             $query->where('id', auth()->user()->userinfo->organization->id);
+        //         })->with(['postcontent', 'useraccount.userinfo'])->paginate(8);
+        //         return response()->json($post);
+        //     }
+        // }
+        // else {
             $post = Post::with(['postcontent', 'useraccount.userinfo'])->where('user_account_id', auth()->user()->id)->paginate(8);
             return response()->json($post);
-        }
+        // }
 
     }
 
@@ -66,25 +90,49 @@ class PostController extends Controller
 
     public function store(Request $request){
 
-        $post_excerpt = Str::limit($request->post_excerpt, 146, ' ...');
-
-        $postcontent = PostContent::create([
-            'title' => $request->title,
-            'content' => $request->content,
-            'image' => $request->image,
-            'post_excerpt' => $post_excerpt
-        ]);
-
-        $post = [
-            'post_content_id' => $postcontent->id,
-            'user_account_id' => auth()->guard('api')->user()->id
-        ];
-
-        if(auth()->user()->userinfo->role->role == 'President' || auth()->user()->userinfo->role->role == 'Unit Chair' || auth()->user()->userinfo->role->role == 'OSA' || auth()->user()->userinfo->role->role == 'University Admin'){
-            $post['status'] = 'Approved';
+        if($request->type == 'text'){
+            $post_excerpt = Str::limit($request->post_excerpt, 146, ' ...');
+            
+            $postcontent = PostContent::create([
+                'title' => $request->title,
+                'content' => $request->content,
+                'image' => $request->image,
+                'post_excerpt' => $post_excerpt
+            ]);
+            
+    
+            $post = [
+                'post_content_id' => $postcontent->id,
+                'user_account_id' => auth()->guard('api')->user()->id
+            ];
+    
+            if(auth()->user()->userinfo->role->role == 'President' || auth()->user()->userinfo->role->role == 'Unit Chair' || auth()->user()->userinfo->role->role == 'OSA' || auth()->user()->userinfo->role->role == 'University Admin'){
+                $post['status'] = 'Approved';
+            }
+    
+            Post::create($post);
         }
+        else {
+            $post = [
+                'title' => $request->title,
+                'user_account_id' => auth()->guard('api')->user()->id
+            ];
 
-        Post::create($post);
+            if(auth()->user()->userinfo->role->role == 'President' || auth()->user()->userinfo->role->role == 'Unit Chair' || auth()->user()->userinfo->role->role == 'OSA' || auth()->user()->userinfo->role->role == 'University Admin'){
+                $post['status'] = 'Approved';
+            }
+
+            $postimg = PostAsImage::create($post);
+
+            foreach($request->imageupdate as $imgupdate){
+                PostImage::create([
+                    'post_as_image_id' => $postimg->id,
+                    'image' => $imgupdate
+                ]);
+            }
+            
+            return response()->json(['msg' => 'Update type is set to image']);
+        }
 
         return response()->json(['msg' => 'Post added successfully!'], 200);
     }
@@ -110,7 +158,7 @@ class PostController extends Controller
     }
 
     public function uploadPostImage(Request $request){
-        $picName = time().'.'.$request->file->extension();
+        $picName = time().rand(10, 400).'.'.$request->file->extension();
         $request->file->move(public_path('uploads'), $picName);
         return $picName;
     }

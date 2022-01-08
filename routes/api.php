@@ -206,6 +206,7 @@ Route::group(['middleware' => 'api'], function (){
         //POSTS
         Route::put('post/approve/{id}', [PostController::class, 'approvePost']);
         Route::get('posts', [PostController::class, 'posts']);
+        Route::get('allposts', [PostController::class, 'allposts']);
         Route::post('post', [PostController::class, 'store']);
         Route::post('search/post', [PostController::class, 'searchPost']);
         Route::put('posts/{id}', [PostController::class, 'updatePost']);
