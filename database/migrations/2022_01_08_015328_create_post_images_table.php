@@ -17,6 +17,7 @@ class CreatePostImagesTable extends Migration
             $table->id();
             $table->text('image');
             $table->foreignId('post_as_image_id')->constrained()->onDelete('cascade');
+            $table->softDeletes();
             $table->timestamps();
         });
     }

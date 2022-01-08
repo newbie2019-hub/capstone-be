@@ -18,6 +18,7 @@ class CreatePostAsImagesTable extends Migration
             $table->string('title', 100);
             $table->foreignId('user_account_id')->constrained()->onDelete('cascade');
             $table->string('status', 15)->default('Pending');
+            $table->softDeletes();
             $table->timestamps();
         });
     }
