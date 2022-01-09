@@ -205,6 +205,8 @@ Route::group(['middleware' => 'api'], function (){
 
         //POSTS
         Route::put('post/approve/{id}', [PostController::class, 'approvePost']);
+        Route::get('posts/images', [PostController::class, 'imageUpdates']);
+        Route::delete('posts/images/{id}', [PostController::class, 'deleteImageUpdate']);
         Route::get('posts', [PostController::class, 'posts']);
         Route::get('allposts', [PostController::class, 'allposts']);
         Route::post('post', [PostController::class, 'store']);
@@ -262,6 +264,7 @@ Route::get('schoolofficials', [InformationKioskController::class, 'schoolofficia
 Route::get('teldirectories', [InformationKioskController::class, 'teldirectories']);
 Route::get('courses', [InformationKioskController::class, 'courses']);
 Route::get('posts', [InformationKioskController::class, 'posts']);
+Route::get('posts/images', [InformationKioskController::class, 'imageposts']);
 Route::post('requestOrgPost', [InformationKioskController::class, 'requestOrgPost']);
 Route::post('requestDepPost', [InformationKioskController::class, 'requestDepPost']);
 Route::post('review', [RateController::class, 'store']);

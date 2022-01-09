@@ -52,25 +52,13 @@ class PostController extends Controller
 
     public function posts()
     {
-        // if (Gate::allows('view_all_posts')) {
-        //     if(auth()->user()->type == 'Department'){
-        //         $post = Post::whereHas('useraccount.userinfo.department', function($query){
-        //             $query->where('id', auth()->user()->userinfo->department->id);
-        //         })->with(['postcontent', 'useraccount.userinfo'])->paginate(8);
-        //         return response()->json($post);
-        //     }
-        //     if(auth()->user()->type == 'Organization'){
-        //         $post = Post::whereHas('useraccount.userinfo.organization', function($query){
-        //             $query->where('id', auth()->user()->userinfo->organization->id);
-        //         })->with(['postcontent', 'useraccount.userinfo'])->paginate(8);
-        //         return response()->json($post);
-        //     }
-        // }
-        // else {
-            $post = Post::with(['postcontent', 'useraccount.userinfo'])->where('user_account_id', auth()->user()->id)->paginate(8);
-            return response()->json($post);
-        // }
+        $post = Post::with(['postcontent', 'useraccount.userinfo'])->where('user_account_id', auth()->user()->id)->paginate(8);
+        return response()->json($post);
+    }
 
+    public function imageUpdates(){
+        $imageUpdate = PostAsImage::where('user_account_id', auth('api')->user()->id)->with(['images', 'user.userinfo'])->get();
+        return response()->json($imageUpdate);
     }
 
     public function approvePost($id){
@@ -161,6 +149,13 @@ class PostController extends Controller
         $picName = time().rand(10, 400).'.'.$request->file->extension();
         $request->file->move(public_path('uploads'), $picName);
         return $picName;
+    }
+
+    //DELETE IMAGE UPDATE AND ITS CONTENT
+    public function deleteImageUpdate($id){
+        $post = PostAsImage::find($id);
+        $post->delete();
+        return response()->json(['success' => 'Update deleted successfully!']);
     }
 
     public function deletePost($id){

@@ -10,6 +10,8 @@ use App\Models\Faqs;
 use App\Models\Organization;
 use App\Models\OrgUnit;
 use App\Models\Post;
+use App\Models\PostAsImage;
+use App\Models\PostImage;
 use App\Models\SchoolOfficials;
 use App\Models\TelephoneDirectory;
 use App\Models\Unit;
@@ -26,6 +28,11 @@ class InformationKioskController extends Controller
         return response()->json(Organization::with(['members', 'members.posts'])->get());
     }
 
+    public function imageposts(){
+        return response()->json(PostImage::where('created_at', '>=', now()->subDays(7))->latest()->take(15)->get());
+        // return response()->json(PostAsImage::with(['images', 'user.userinfo', 'user.userinfo.role', 'user.userinfo.organization', 'user.userinfo.department'])->where('status', 'Approved')->where('created_at', '>=', now()->subDays(7))->latest()->take(15)->get());
+    }
+    
     public function posts(){
         return response()->json(Post::with(['postcontent', 'useraccount.userinfo', 'useraccount.userinfo.role', 'useraccount.userinfo.organization', 'useraccount.userinfo.department'])->where('status', 'Approved')->where('created_at', '>=', now()->subDays(7))->latest()->take(15)->get());
     }
