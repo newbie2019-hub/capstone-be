@@ -25,7 +25,7 @@ class AdminAccountSeeder extends Seeder
         ]);
 
         AdminAccount::create([
-            'email' => 'lnumis@edu.ph',
+            'email' => 'mis@lnu.edu.ph',
             'password' => Hash::make('123123'),
             'admin_account_info_id' => $account_info->id
         ]);

@@ -256,7 +256,7 @@ class UserAccountSeeder extends Seeder
 
         $uniadmin = UserAccount::create([
             'user_info_id' => $uniadmin->id,
-            'email' => 'lnuadmin@edu.ph',
+            'email' => 'admin@lnu.edu.ph',
             'password' => Hash::make('123123'),
             'status' => 'Approved',
             'type' => 'Department'

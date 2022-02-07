@@ -145,7 +145,7 @@ class AccountController extends Controller
         //Enable this to send email to the user for the approval of the account
         //See .env for the configuration of the email server
         
-        // Mail::to($user->email)->send(new ApprovedAccountMail($data));
+        Mail::to($user->email)->send(new ApprovedAccountMail($data));
 
         if($user) {
             $user->update(['status' => 'Approved']);

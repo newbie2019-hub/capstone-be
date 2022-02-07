@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\UserAccountRequest;
 use App\Mail\NewAccountMail;
 use App\Mail\PasswordResetMail;
+use App\Models\AdminAccount;
 use App\Models\DepartmentUser;
 use App\Models\Organization;
 use App\Models\OrganizationAccount;
@@ -236,7 +237,22 @@ class UserAuthController extends Controller
             return response()->json(['msg' => 'Password reset has been sent to your email address'], 200);
         }
         else {
-            return response()->json(['msg' => 'Email address doesn\'t exist'], 404);
+            $admin = AdminAccount::where('email', $request->email)->first();
+
+            if($admin) {
+                DB::table('password_resets')->insert([
+                    'email' => $request->email,
+                    'token' => $data['token']
+                ]);
+    
+                Mail::to($request->email)->send(new PasswordResetMail($data));
+    
+                return response()->json(['msg' => 'Password reset has been sent to your email address'], 200);
+            }
+            else {
+                return response()->json(['msg' => 'Email address doesn\'t exist'], 404);
+            }
+
         }
         return response()->json(['msg' => 'Password reset has been sent to your email address'], 200);
 
@@ -265,14 +281,30 @@ class UserAuthController extends Controller
 
         if($password_reset){
             $user = UserAccount::where('email', $request->email)->first();
-            $user->update(['password' => Hash::make($request->password)]);
 
-            DB::table('password_resets')->where([
-                'email' => $request->email,
-                'token' => $request->token
-            ])->delete();
-            
-            return response()->json(['msg' => 'Password updated successfully'], 200);
+            if($user){
+                $user->update(['password' => Hash::make($request->password)]);
+    
+                DB::table('password_resets')->where([
+                    'email' => $request->email,
+                    'token' => $request->token
+                ])->delete();
+                
+                return response()->json(['msg' => 'Password updated successfully'], 200);
+            }
+
+            $admin = AdminAccount::where('email', $request->email)->first();
+
+            if($admin){
+                $admin->update(['password' => Hash::make($request->password)]);
+    
+                DB::table('password_resets')->where([
+                    'email' => $request->email,
+                    'token' => $request->token
+                ])->delete();
+                
+                return response()->json(['msg' => 'Password updated successfully'], 200);
+            }
         }
         else {
             return response()->json(['msg' => 'Error reset password request not valid'], 404);
